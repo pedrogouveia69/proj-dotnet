@@ -1,0 +1,15 @@
+C:\Users\decke\source\repos\projDotNet\bin\Debug\net6.0\projDotNet.exe
+C:\Users\decke\source\repos\projDotNet\bin\Debug\net6.0\projDotNet.deps.json
+C:\Users\decke\source\repos\projDotNet\bin\Debug\net6.0\projDotNet.runtimeconfig.json
+C:\Users\decke\source\repos\projDotNet\bin\Debug\net6.0\projDotNet.dll
+C:\Users\decke\source\repos\projDotNet\bin\Debug\net6.0\ref\projDotNet.dll
+C:\Users\decke\source\repos\projDotNet\bin\Debug\net6.0\projDotNet.pdb
+C:\Users\decke\source\repos\projDotNet\obj\Debug\net6.0\projDotNet.csproj.AssemblyReference.cache
+C:\Users\decke\source\repos\projDotNet\obj\Debug\net6.0\projDotNet.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\decke\source\repos\projDotNet\obj\Debug\net6.0\projDotNet.AssemblyInfoInputs.cache
+C:\Users\decke\source\repos\projDotNet\obj\Debug\net6.0\projDotNet.AssemblyInfo.cs
+C:\Users\decke\source\repos\projDotNet\obj\Debug\net6.0\projDotNet.csproj.CoreCompileInputs.cache
+C:\Users\decke\source\repos\projDotNet\obj\Debug\net6.0\projDotNet.dll
+C:\Users\decke\source\repos\projDotNet\obj\Debug\net6.0\ref\projDotNet.dll
+C:\Users\decke\source\repos\projDotNet\obj\Debug\net6.0\projDotNet.pdb
+C:\Users\decke\source\repos\projDotNet\obj\Debug\net6.0\projDotNet.genruntimeconfig.cache
