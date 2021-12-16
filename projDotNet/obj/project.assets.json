@@ -13,11 +13,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\decke\\source\\repos\\projDotNet\\projDotNet.csproj",
+      "projectUniqueName": "D:\\github\\projDotNet\\projDotNet\\projDotNet.csproj",
       "projectName": "projDotNet",
-      "projectPath": "C:\\Users\\decke\\source\\repos\\projDotNet\\projDotNet.csproj",
+      "projectPath": "D:\\github\\projDotNet\\projDotNet\\projDotNet.csproj",
       "packagesPath": "C:\\Users\\decke\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\decke\\source\\repos\\projDotNet\\obj\\",
+      "outputPath": "D:\\github\\projDotNet\\projDotNet\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\decke\\AppData\\Roaming\\NuGet\\NuGet.Config",
