@@ -10,49 +10,6 @@ void displayMenu(string title, string[] options)
 	Console.Write("Escolha uma opção: ");
 }
 
-
-
-void displayMainMenu() 
-{
-	var mainMenuOptions = new string[] { "Menu Admin", "Menu Cliente" };
-	displayMenu("Bem-vindo", mainMenuOptions);
-	int option = checkIfValidOption(mainMenuOptions.Length);
-	switch (option)
-	{
-		case 1:
-			displayAdminMenu();
-			break;
-		case 2:
-			displayClientMenu();
-			break;
-	}
-}
-
-void displayAdminMenu() 
-{
-	var adminMenuOptions = new string[] { "Ver Zonas", "Ver Histórico", "Ver Máquinas", "Voltar" };
-	displayMenu("Menu Admin", adminMenuOptions);
-	int option = checkIfValidOption(adminMenuOptions.Length);
-	switch (option)
-	{
-		case 4:
-			displayMainMenu();
-			break;
-	}
-};
-
-void displayClientMenu() 
-{
-	var clientMenuOptions = new string[] { "Estacionar", "Ver Zonas", "Voltar" };
-	displayMenu("Menu Cliente", clientMenuOptions);
-};
-
-void displayParkingZones()
-{
-	var clientMenuOptions = new string[] { "Zona 1", "Zona 2", "Zona 3" };
-	displayMenu("Zonas", clientMenuOptions);
-};
-
 int checkIfValidOption(int optionsLength)
 {
 	string optionStr = Console.ReadLine();
@@ -76,6 +33,127 @@ int checkIfValidOption(int optionsLength)
 	return option;
 }
 
+
+void displayMainMenu() 
+{
+	var mainMenuOptions = new string[] { "Menu Admin", "Menu Cliente" };
+	displayMenu("Bem-vindo", mainMenuOptions);
+	int option = checkIfValidOption(mainMenuOptions.Length);
+	switch (option)
+	{
+		case 1:
+			Console.WriteLine("INSERIR PASS");
+			string pass = Console.ReadLine();
+			bool resultado = isPasswordCorrect(pass);
+			if (resultado)
+            {
+				displayAdminMenu();
+			} 
+			else
+            {
+				Console.WriteLine("password incorreta");
+				// falta timer
+				displayMainMenu();
+            }
+			break;
+		case 2:
+			displayClientMenu();
+			break;
+	}
+}
+
+void displayAdminMenu() 
+{
+	var adminMenuOptions = new string[] { "Ver Zonas", "Ver Histórico", "Ver Máquinas", "Voltar" };
+	displayMenu("Menu Admin", adminMenuOptions);
+	int option = checkIfValidOption(adminMenuOptions.Length);
+	switch (option)
+	{
+		case 4:
+			displayMainMenu();
+			break;
+	}
+};
+
+bool isPasswordCorrect(string password)
+{
+	string correctPassword = "1234";
+	if (password == correctPassword)
+    {
+		return true;
+    }
+    else
+    {
+		return false;
+    }
+}
+
+void displayClientMenu() 
+{
+	var clientMenuOptions = new string[] { "Ver Zonas", "Voltar" };
+	displayMenu("Menu Cliente", clientMenuOptions);
+
+	int option = checkIfValidOption(clientMenuOptions.Length);
+	switch (option)
+	{
+		case 1:
+			displayParkingZones();
+			break;
+	}
+
+};
+
+void displayParkingZones()
+{
+	var clientMenuOptions = new string[] { "Zona 1", "Zona 2", "Zona 3" };
+	displayMenu("Zonas", clientMenuOptions);
+
+	int option = checkIfValidOption(clientMenuOptions.Length);
+	switch (option)
+	{
+		case 1:
+			displayZone(1);
+			break;
+
+		case 2:
+			displayZone(2);
+			break;
+
+		case 3:
+			displayZone(3);
+			break;
+	}
+};
+
+void displayZone(int zoneNumber)
+{
+	var zoneoptions = new string[] { "estacionar", "remover carro" };
+	displayMenu("zona" + zoneNumber, zoneoptions);
+
+	int option = checkIfValidOption(zoneoptions.Length);
+	switch (option)
+	{
+		case 1:
+			inserirMoedas();
+			break;
+
+	}
+}
+
+
+
+void inserirMoedas()
+{
+	var coins = new string[] {
+		"0.5€", "0.10€", "0.20€", "0.50€", "1€", "2€"
+    };
+
+	displayMenu("Inserir moedas", coins);
+
+}
+
+
+
 bool parkIsFull(DateTime[] parkingSpots)
 {
 	int occupiedSpots = 0;
@@ -89,6 +167,14 @@ bool parkIsFull(DateTime[] parkingSpots)
 		return true;
 
 	return false;
+}
+
+void calculateCentsPerSecond(int cents)
+{
+	int seconds = 0;
+	seconds = 1 * 3600 / cents;
+
+	Console.WriteLine(seconds);
 }
 
 var rand = new Random();
@@ -153,4 +239,3 @@ addToAge(12);
 Console.WriteLine(getAge());
 */
 
-//displayParkingZones();
