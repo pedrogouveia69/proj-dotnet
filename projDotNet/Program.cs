@@ -10,28 +10,7 @@ void displayMenu(string title, string[] options)
 	Console.Write("Escolha uma opção: ");
 }
 
-int checkIfValidOption(int optionsLength)
-{
-	string optionStr = Console.ReadLine();
-	
-	if (string.IsNullOrEmpty(optionStr))
-	{
-		Console.WriteLine("Não foi selecionada nenhuma opção!");
-		Console.Write("Escolha uma opção: ");
-		return checkIfValidOption(optionsLength);
-	}
 
-	int option;
-	bool tryParse = int.TryParse(optionStr, out option);
-	if (!tryParse || (option < 1 || option > optionsLength))
-	{
-		Console.WriteLine("Opção inválida!");
-		Console.Write("Escolha uma opção: ");
-		return checkIfValidOption(optionsLength);
-	}
-
-	return option;
-}
 
 void displayMainMenu() 
 {
@@ -68,6 +47,35 @@ void displayClientMenu()
 	displayMenu("Menu Cliente", clientMenuOptions);
 };
 
+void displayParkingZones()
+{
+	var clientMenuOptions = new string[] { "Zona 1", "Zona 2", "Zona 3" };
+	displayMenu("Zonas", clientMenuOptions);
+};
+
+int checkIfValidOption(int optionsLength)
+{
+	string optionStr = Console.ReadLine();
+
+	if (string.IsNullOrEmpty(optionStr))
+	{
+		Console.WriteLine("Não foi selecionada nenhuma opção!");
+		Console.Write("Escolha uma opção: ");
+		return checkIfValidOption(optionsLength);
+	}
+
+	int option;
+	bool tryParse = int.TryParse(optionStr, out option);
+	if (!tryParse || (option < 1 || option > optionsLength))
+	{
+		Console.WriteLine("Opção inválida!");
+		Console.Write("Escolha uma opção: ");
+		return checkIfValidOption(optionsLength);
+	}
+
+	return option;
+}
+
 bool parkIsFull(DateTime[] parkingSpots)
 {
 	int occupiedSpots = 0;
@@ -87,21 +95,23 @@ var rand = new Random();
 var parkingOneSpots = new DateTime[rand.Next(1, 10)];
 
 displayMainMenu();
-
+ /*
 for (int i = 0; i < parkingOneSpots.Length; i++)
 {
 	Console.WriteLine(parkingOneSpots[i]);
 }
+*/ 
 
 // Add time to DateTime
 DateTime now = DateTime.Now;
 DateTime total = now.AddSeconds(60);
 
+/*
 // DateTime comparision is possible
 if (total > now) {
 	Console.WriteLine(true);
 }
-
+*/
 /*
 //https://stackoverflow.com/questions/38816004/simple-string-encryption-without-dependencies
 string cryptString(string input)
@@ -142,3 +152,5 @@ addToAge(12);
 
 Console.WriteLine(getAge());
 */
+
+//displayParkingZones();
