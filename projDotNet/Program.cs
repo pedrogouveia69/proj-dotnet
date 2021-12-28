@@ -1,13 +1,25 @@
 ﻿using System.Text;
 
+int num; // = 0
+DateTime date; // = 01-Jan-01 00:00:00
+
+
 var rand = new Random();
-var parkingOne = new DateTime[rand.Next(1, 5)];
-var parkingTwo = new DateTime[rand.Next(1, 5)];
-var parkingThree = new DateTime[rand.Next(1, 5)];
+var parkingOne = new DateTime[rand.Next(1, 10)];
+var parkingTwo = new DateTime[rand.Next(1, 10)];
+var parkingThree = new DateTime[rand.Next(1, 10)];
 
 setupParkingZone(parkingOne);
 setupParkingZone(parkingTwo);
 setupParkingZone(parkingThree);
+
+void setupParkingZone(DateTime[] parkingZone)
+{
+	for (int i = 0; i < parkingZone.Length; i++)
+	{
+		parkingZone[i] = new DateTime();
+	}
+}
 
 void displayMenu(string title, string[] options) 
 {
@@ -71,12 +83,25 @@ void displayMainMenu()
 
 void displayAdminMenu() 
 {
-	var adminMenuOptions = new string[] { "Ver Zonas", "Ver Histórico", "Ver Máquinas", "Voltar" };
+	var adminMenuOptions = new string[] { "Ver Zonas", "Ver Histórico", "Ver Máquinas", "displayAllParkingSpots()", "Voltar" };
 	displayMenu("Menu Admin", adminMenuOptions);
 	int option = checkIfValidOption(adminMenuOptions.Length);
 	switch (option)
 	{
 		case 4:
+			Console.WriteLine("Zona 1");
+			displayAllParkingSpots(parkingOne);
+			Console.WriteLine();
+			Console.WriteLine("Zona 2");
+			displayAllParkingSpots(parkingTwo);
+			Console.WriteLine();
+			Console.WriteLine("Zona 3");
+			displayAllParkingSpots(parkingThree);
+			Console.WriteLine();
+			Console.ReadLine();
+			displayMainMenu();
+			break;
+		case 5:
 			displayMainMenu();
 			break;
 	}
@@ -103,7 +128,7 @@ void displayClientMenu()
 }
 
 //receber argumento estacionar ou remover
-void displayParkingZones(bool isParking)
+void displayParkingZones(bool userIsParking)
 {
 	var zoneOptions = new string[] { "Zona 1", "Zona 2", "Zona 3" };
 	displayMenu("Selecione uma zona: ", zoneOptions);
@@ -111,7 +136,7 @@ void displayParkingZones(bool isParking)
 
 	//variaveis com preço p/hora e tempo maximo
 
-	if (isParking)
+	if (userIsParking)
 	{
 		switch (option)
 		{
@@ -140,7 +165,10 @@ void displayParkingZones(bool isParking)
 		switch (option)
 		{
 			case 1:
-
+				Console.WriteLine("Introduza o ID");
+				// needs empty/null verification
+				int id = int.Parse(Console.ReadLine());
+				removeCar(parkingOne, id);
 				break;
 		}
 	}
@@ -161,7 +189,7 @@ bool passwordIsCorrect(string password)
 }
 
 void inserirMoedas()
-{
+{									
 	var coinOptions = new string[] { "0.05€", "0.10€", "0.20€", "0.50€", "1.00€", "2.00€" };
 	displayMenu("Insira uma Moeda", coinOptions);
 
@@ -191,14 +219,6 @@ void getSecondsPerCent(int cents)
 	Console.WriteLine(seconds);
 }
 
-void setupParkingZone(DateTime[] parkingZone) 
-{
-	for	(int i = 0; i < parkingZone.Length; i++) 
-	{
-		parkingZone[i] = new DateTime();	
-	}
-}
-
 void displayAllParkingSpots(DateTime[] parkingZone) 
 {
 	for (int i = 0; i < parkingZone.Length; i++) 
@@ -219,7 +239,7 @@ void parkCar(DateTime[] parkingZone, int seconds)
 			parkingZone[i] = totalTime;
 			Console.WriteLine("Isto é o ticket!!!");
 			Console.WriteLine("ID=" + i + "; DURACAO=" + totalTime);
-			Thread.Sleep(3000);
+			Thread.Sleep(5000);
 			displayMainMenu();
         }
 	}
@@ -227,7 +247,13 @@ void parkCar(DateTime[] parkingZone, int seconds)
 
 void removeCar(DateTime[] parkingZone, int id)
 {
-	if ((id > (parkingZone.Length -1) || id < 0) || parkingZone[id] == new DateTime())
+	if ((id > (parkingZone.Length -1) || id < 0))
+	{
+		Console.WriteLine("ID Inválido.");
+		Thread.Sleep(3000);
+		displayClientMenu();
+	}
+	else if (parkingZone[id] == new DateTime()) 
 	{
 		Console.WriteLine("Não há nenhum carro estacionado neste lugar.");
 		Thread.Sleep(3000);
@@ -237,9 +263,12 @@ void removeCar(DateTime[] parkingZone, int id)
 	{
 		parkingZone[id] = new DateTime();
 		Console.WriteLine("Obrigado pela sua preferência.");
+		Thread.Sleep(3000);
+		displayMainMenu();
 	}
 }
 
+displayMainMenu();
 
 /*
 // DateTime comparision is possible
@@ -271,22 +300,4 @@ if (cryptString(Console.ReadLine()) == password)
 {
 	Console.WriteLine(true);
 }
-*/
-
-/*
-int age = 69;
-Console.WriteLine(getAge());
-
-void addToAge(int add) {
-	age = age + add;
-}
-
-int getAge() 
-{
-	return age;
-}
-
-addToAge(12);
-
-Console.WriteLine(getAge());
 */
