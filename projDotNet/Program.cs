@@ -10,8 +10,6 @@ var parkingTwo = new DateTime[rand.Next(1, 10)];
 var parkingThree = new DateTime[rand.Next(1, 10)];
 
 int totalInCents = 0;
-bool insertedFirstCoin = false; 
-
 
 
 setupParkingZone(parkingOne);
@@ -193,6 +191,7 @@ bool passwordIsCorrect(string password)
     }
 }
 
+// ta tudo fodido
 void inserirMoedas()
 {
 	int[] coinCalc = new int[] { 5, 10, 20, 50, 100, 200 };
@@ -207,28 +206,24 @@ void inserirMoedas()
 	{
 		for (int i = 0; i < coinDisplay.Length; i++)
 		{
-			if (i == 0)
-			{
-				if (option == 7 || option == 8)
-				{
-					Console.WriteLine("Não é possível confirmar/fazer reset sem introduzir dinheiro.");
-					Thread.Sleep(3000);
-					inserirMoedas();
-				}
-			}
-			else if (option - 1 == i)
+			if (option - 1 == i)
 			{
 				totalInCents += coinCalc[i];
-				insertedFirstCoin = true;
 			}
 		}
 		inserirMoedas();
 	}
-	if (option == 7 && insertedFirstCoin == true)
+	if ((option == 7 || option == 8) && totalInCents > 0)
+    {
+		Console.WriteLine("Não é possível confirmar/fazer reset sem introduzir dinheiro.");
+		Thread.Sleep(3000);
+		inserirMoedas();
+	}
+	else if (option == 7)
     {
 		parkCar(parkingOne, getSecondsPerCent(115) * totalInCents);
     }	
-	if (option == 8 && insertedFirstCoin == true)
+	else if (option == 8)
     {
 		totalInCents = 0;
 		inserirMoedas();
