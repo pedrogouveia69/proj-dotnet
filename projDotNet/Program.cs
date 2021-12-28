@@ -9,6 +9,8 @@ var parkingOne = new DateTime[rand.Next(1, 10)];
 var parkingTwo = new DateTime[rand.Next(1, 10)];
 var parkingThree = new DateTime[rand.Next(1, 10)];
 
+int totalInCents = 0;
+
 setupParkingZone(parkingOne);
 setupParkingZone(parkingTwo);
 setupParkingZone(parkingThree);
@@ -190,46 +192,39 @@ bool passwordIsCorrect(string password)
 
 void inserirMoedas()
 {
-	bool insertedFirstCoin = false;
-	int total = 0;
 	int[] coinCalc = new int[] { 5, 10, 20, 50, 100, 200 };
-	
-	while 
-	if (insertedFirstCoin == false)
-    {
-		var coinDisplay = new string[] { "0.05€", "0.10€", "0.20€", "0.50€", "1.00€", "2.00€" };
-		displayMenu("Insira uma Moeda", coinDisplay);
-		int option = checkIfValidOption(coinDisplay.Length);
-		for (int i = 0; i < coinCalc.Length; i++)
-		{
-			if (option - 1 == i) { total += coinCalc[i]; }
-			Console.WriteLine(coinCalc[i]);
+	var coinDisplay = new string[] { "0.05€", "0.10€", "0.20€", "0.50€", "1.00€", "2.00€" , "Confirmar", "Reset"};
 
-			insertedFirstCoin = true;
-		}
-	}
-	
-	else
-    {
-		var test = new string[] { "0.05€", "0.10€", "0.20€", "0.50€", "1.00€", "2.00€", "confirmar", "reset" };
-		displayMenu("Insira uma Moeda", test);
-		int option = checkIfValidOption(test.Length);
-		for (int i = 0; i < coinCalc.Length; i++)
-		{
-			if (option - 1 == i) { total += coinCalc[i]; }
-			Console.WriteLine(coinCalc[i]);
+	displayMenu("Insira uma Moeda", coinDisplay);
+	//falta casas decimais
+	Console.WriteLine("\nTotal: " + (float)totalInCents/100 + "€");
+	int option = checkIfValidOption(coinDisplay.Length);
 
-			insertedFirstCoin = true;
+	while (option != 7)
+	{
+		for (int i = 0; i < coinDisplay.Length; i++)
+		{
+			if (i == 0)
+			{
+				if (option == 7 || option == 8)
+				{
+					Console.WriteLine("Não é possível confirmar/fazer reset sem introduzir dinheiro.");
+					Thread.Sleep(3000);
+					inserirMoedas();
+				}
+			}
+			if (option - 1 == i)
+			{
+				totalInCents += coinCalc[i];
+			}
 		}
+		inserirMoedas();
 	}
-		
-	Console.WriteLine(total);
-	
+	if (option == 7)
+    {
+		parkCar(parkingOne, getSecondsPerCent(115) * totalInCents);
+    }	
 }
-
-
-
-
 
 bool parkIsFull(DateTime[] parkingZone)
 {
@@ -247,12 +242,9 @@ bool parkIsFull(DateTime[] parkingZone)
 }
 
 // remove uneeded variable
-void getSecondsPerCent(int cents)
+int getSecondsPerCent(int cents)
 {
-	int seconds = 0;
-	seconds = 1 * 3600 / cents;
-
-	Console.WriteLine(seconds);
+	return 1 * 3600 / cents;
 }
 
 void displayAllParkingSpots(DateTime[] parkingZone) 
@@ -275,6 +267,7 @@ void parkCar(DateTime[] parkingZone, int seconds)
 			parkingZone[i] = totalTime;
 			Console.WriteLine("Isto é o ticket!!!");
 			Console.WriteLine("ID=" + i + "; DURACAO=" + totalTime);
+			totalInCents = 0;
 			Thread.Sleep(5000);
 			displayMainMenu();
         }

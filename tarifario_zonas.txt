@@ -2,6 +2,8 @@ zona 1
 115 centimos ----- 3600 segundos
 1 centimo ---- 31.30 segundos
 
+5 --- 156.5
+
 max 2700 segundos
 
 
