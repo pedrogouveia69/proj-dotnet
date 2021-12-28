@@ -202,9 +202,9 @@ void inserirMoedas()
 	Console.WriteLine("\nTotal: " + (float)totalInCents/100 + "€");
 	int option = checkIfValidOption(coinDisplay.Length);
 
-	while (option != 7 || option != 8)
+	while (option != 7 && option != 8)
 	{
-		for (int i = 0; i < coinDisplay.Length; i++)
+		for (int i = 0; i < coinCalc.Length; i++)
 		{
 			if (option - 1 == i)
 			{
@@ -213,7 +213,7 @@ void inserirMoedas()
 		}
 		inserirMoedas();
 	}
-	if ((option == 7 || option == 8) && totalInCents > 0)
+	if ((option == 7 || option == 8) && totalInCents < 5)
     {
 		Console.WriteLine("Não é possível confirmar/fazer reset sem introduzir dinheiro.");
 		Thread.Sleep(3000);
