@@ -10,6 +10,9 @@ var parkingTwo = new DateTime[rand.Next(1, 10)];
 var parkingThree = new DateTime[rand.Next(1, 10)];
 
 int totalInCents = 0;
+bool insertedFirstCoin = false; 
+
+
 
 setupParkingZone(parkingOne);
 setupParkingZone(parkingTwo);
@@ -194,13 +197,13 @@ void inserirMoedas()
 {
 	int[] coinCalc = new int[] { 5, 10, 20, 50, 100, 200 };
 	var coinDisplay = new string[] { "0.05€", "0.10€", "0.20€", "0.50€", "1.00€", "2.00€" , "Confirmar", "Reset"};
-
+	
 	displayMenu("Insira uma Moeda", coinDisplay);
 	//falta casas decimais
 	Console.WriteLine("\nTotal: " + (float)totalInCents/100 + "€");
 	int option = checkIfValidOption(coinDisplay.Length);
 
-	while (option != 7)
+	while (option != 7 || option != 8)
 	{
 		for (int i = 0; i < coinDisplay.Length; i++)
 		{
@@ -213,17 +216,23 @@ void inserirMoedas()
 					inserirMoedas();
 				}
 			}
-			if (option - 1 == i)
+			else if (option - 1 == i)
 			{
 				totalInCents += coinCalc[i];
+				insertedFirstCoin = true;
 			}
 		}
 		inserirMoedas();
 	}
-	if (option == 7)
+	if (option == 7 && insertedFirstCoin == true)
     {
 		parkCar(parkingOne, getSecondsPerCent(115) * totalInCents);
     }	
+	if (option == 8 && insertedFirstCoin == true)
+    {
+		totalInCents = 0;
+		inserirMoedas();
+    }
 }
 
 bool parkIsFull(DateTime[] parkingZone)
