@@ -189,11 +189,47 @@ bool passwordIsCorrect(string password)
 }
 
 void inserirMoedas()
-{									
-	var coinOptions = new string[] { "0.05€", "0.10€", "0.20€", "0.50€", "1.00€", "2.00€" };
-	displayMenu("Insira uma Moeda", coinOptions);
+{
+	bool insertedFirstCoin = false;
+	int total = 0;
+	int[] coinCalc = new int[] { 5, 10, 20, 50, 100, 200 };
+	
+	while 
+	if (insertedFirstCoin == false)
+    {
+		var coinDisplay = new string[] { "0.05€", "0.10€", "0.20€", "0.50€", "1.00€", "2.00€" };
+		displayMenu("Insira uma Moeda", coinDisplay);
+		int option = checkIfValidOption(coinDisplay.Length);
+		for (int i = 0; i < coinCalc.Length; i++)
+		{
+			if (option - 1 == i) { total += coinCalc[i]; }
+			Console.WriteLine(coinCalc[i]);
 
+			insertedFirstCoin = true;
+		}
+	}
+	
+	else
+    {
+		var test = new string[] { "0.05€", "0.10€", "0.20€", "0.50€", "1.00€", "2.00€", "confirmar", "reset" };
+		displayMenu("Insira uma Moeda", test);
+		int option = checkIfValidOption(test.Length);
+		for (int i = 0; i < coinCalc.Length; i++)
+		{
+			if (option - 1 == i) { total += coinCalc[i]; }
+			Console.WriteLine(coinCalc[i]);
+
+			insertedFirstCoin = true;
+		}
+	}
+		
+	Console.WriteLine(total);
+	
 }
+
+
+
+
 
 bool parkIsFull(DateTime[] parkingZone)
 {
@@ -268,7 +304,8 @@ void removeCar(DateTime[] parkingZone, int id)
 	}
 }
 
-displayMainMenu();
+inserirMoedas();
+//displayMainMenu();
 
 /*
 // DateTime comparision is possible

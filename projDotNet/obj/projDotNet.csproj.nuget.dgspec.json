@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "D:\\github\\projDotNet\\projDotNet\\projDotNet.csproj": {}
+    "C:\\Users\\henri\\Documents\\GitHub\\projDotNet\\projDotNet\\projDotNet.csproj": {}
   },
   "projects": {
-    "D:\\github\\projDotNet\\projDotNet\\projDotNet.csproj": {
+    "C:\\Users\\henri\\Documents\\GitHub\\projDotNet\\projDotNet\\projDotNet.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\github\\projDotNet\\projDotNet\\projDotNet.csproj",
+        "projectUniqueName": "C:\\Users\\henri\\Documents\\GitHub\\projDotNet\\projDotNet\\projDotNet.csproj",
         "projectName": "projDotNet",
-        "projectPath": "D:\\github\\projDotNet\\projDotNet\\projDotNet.csproj",
-        "packagesPath": "C:\\Users\\decke\\.nuget\\packages\\",
-        "outputPath": "D:\\github\\projDotNet\\projDotNet\\obj\\",
+        "projectPath": "C:\\Users\\henri\\Documents\\GitHub\\projDotNet\\projDotNet\\projDotNet.csproj",
+        "packagesPath": "C:\\Users\\henri\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\henri\\Documents\\GitHub\\projDotNet\\projDotNet\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\decke\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\henri\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
