@@ -182,7 +182,8 @@ bool parkIsFull(DateTime[] parkingZone)
 	return false;
 }
 
-void calculateSecondsPerCent(int cents)
+// remove uneeded variable
+void getSecondsPerCent(int cents)
 {
 	int seconds = 0;
 	seconds = 1 * 3600 / cents;
@@ -226,17 +227,18 @@ void parkCar(DateTime[] parkingZone, int seconds)
 
 void removeCar(DateTime[] parkingZone, int id)
 {
-	if ((id > parkingZone.Length || id < 0) || parkingZone[id] == new DateTime())
-		Console.WriteLine("Não há nenhum carro estacionado nesse lugar.");
+	if ((id > (parkingZone.Length -1) || id < 0) || parkingZone[id] == new DateTime())
+	{
+		Console.WriteLine("Não há nenhum carro estacionado neste lugar.");
+		Thread.Sleep(3000);
+		displayClientMenu();
+	}
 	else
 	{
 		parkingZone[id] = new DateTime();
 		Console.WriteLine("Obrigado pela sua preferência.");
 	}
 }
-
-
-displayMainMenu();
 
 
 /*
