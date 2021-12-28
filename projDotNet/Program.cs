@@ -1,5 +1,14 @@
 ﻿using System.Text;
 
+var rand = new Random();
+var parkingOne = new DateTime[rand.Next(1, 5)];
+var parkingTwo = new DateTime[rand.Next(1, 5)];
+var parkingThree = new DateTime[rand.Next(1, 5)];
+
+setupParkingZone(parkingOne);
+setupParkingZone(parkingTwo);
+setupParkingZone(parkingThree);
+
 void displayMenu(string title, string[] options) 
 {
     Console.Clear();
@@ -33,7 +42,6 @@ int checkIfValidOption(int optionsLength)
 	return option;
 }
 
-
 void displayMainMenu() 
 {
 	var mainMenuOptions = new string[] { "Menu Admin", "Menu Cliente" };
@@ -42,18 +50,17 @@ void displayMainMenu()
 	switch (option)
 	{
 		case 1:
-			Console.WriteLine("INSERIR PASS");
-			string pass = Console.ReadLine();
-			bool resultado = isPasswordCorrect(pass);
-			if (resultado)
+			Console.WriteLine("Insira a palavra-passe: ");
+			string passsword = Console.ReadLine();
+			if (!passwordIsCorrect(passsword) || string.IsNullOrEmpty(passsword))
             {
-				displayAdminMenu();
+				Console.WriteLine("Password Incorreta");
+				Thread.Sleep(3000);
+				displayMainMenu();
 			} 
 			else
             {
-				Console.WriteLine("password incorreta");
-				// falta timer
-				displayMainMenu();
+				displayAdminMenu();
             }
 			break;
 		case 2:
@@ -75,7 +82,72 @@ void displayAdminMenu()
 	}
 };
 
-bool isPasswordCorrect(string password)
+void displayClientMenu()
+{
+	var clientMenuOptions = new string[] { "Estacionar", "Remover Carro", "Voltar" };
+	displayMenu("Menu Cliente", clientMenuOptions);
+
+	int option = checkIfValidOption(clientMenuOptions.Length);
+	switch (option)
+	{
+		case 1:
+			displayParkingZones(true);
+			break;
+		case 2:
+			displayParkingZones(false);
+			break;
+		case 3:
+			displayMainMenu();
+			break;
+	}
+}
+
+//receber argumento estacionar ou remover
+void displayParkingZones(bool isParking)
+{
+	var zoneOptions = new string[] { "Zona 1", "Zona 2", "Zona 3" };
+	displayMenu("Selecione uma zona: ", zoneOptions);
+	int option = checkIfValidOption(zoneOptions.Length);
+
+	//variaveis com preço p/hora e tempo maximo
+
+	if (isParking)
+	{
+		switch (option)
+		{
+			case 1:
+				if (parkIsFull(parkingOne))
+				{
+					Console.WriteLine("Este parque está cheio.");
+					Thread.Sleep(3000);
+					displayParkingZones(true);
+				}
+				else
+					parkCar(parkingOne, 120);
+				break;
+
+			case 2:
+				inserirMoedas();
+				break;
+
+			case 3:
+				inserirMoedas();
+				break;
+		}
+	}
+	else
+	{
+		switch (option)
+		{
+			case 1:
+
+				break;
+		}
+	}
+};
+
+//no need for else
+bool passwordIsCorrect(string password)
 {
 	string correctPassword = "1234";
 	if (password == correctPassword)
@@ -88,88 +160,29 @@ bool isPasswordCorrect(string password)
     }
 }
 
-void displayClientMenu() 
-{
-	var clientMenuOptions = new string[] { "Ver Zonas", "Voltar" };
-	displayMenu("Menu Cliente", clientMenuOptions);
-
-	int option = checkIfValidOption(clientMenuOptions.Length);
-	switch (option)
-	{
-		case 1:
-			displayParkingZones();
-			break;
-	}
-
-};
-
-void displayParkingZones()
-{
-	var clientMenuOptions = new string[] { "Zona 1", "Zona 2", "Zona 3" };
-	displayMenu("Zonas", clientMenuOptions);
-
-	int option = checkIfValidOption(clientMenuOptions.Length);
-	switch (option)
-	{
-		case 1:
-			displayZone(1);
-			break;
-
-		case 2:
-			displayZone(2);
-			break;
-
-		case 3:
-			displayZone(3);
-			break;
-	}
-};
-
-void displayZone(int zoneNumber)
-{
-	var zoneoptions = new string[] { "estacionar", "remover carro" };
-	displayMenu("zona" + zoneNumber, zoneoptions);
-
-	int option = checkIfValidOption(zoneoptions.Length);
-	switch (option)
-	{
-		case 1:
-			inserirMoedas();
-			break;
-
-	}
-}
-
-
-
 void inserirMoedas()
 {
-	var coins = new string[] {
-		"0.5€", "0.10€", "0.20€", "0.50€", "1€", "2€"
-    };
-
-	displayMenu("Inserir moedas", coins);
+	var coinOptions = new string[] { "0.05€", "0.10€", "0.20€", "0.50€", "1.00€", "2.00€" };
+	displayMenu("Insira uma Moeda", coinOptions);
 
 }
 
-
-
-bool parkIsFull(DateTime[] parkingSpots)
+bool parkIsFull(DateTime[] parkingZone)
 {
 	int occupiedSpots = 0;
-	for (int i = 0; i < parkingSpots.Length; i++)
+	for (int i = 0; i < parkingZone.Length; i++)
 	{
-		if (parkingSpots[i] != new DateTime())
+		if (parkingZone[i] != new DateTime())
 			occupiedSpots++;
 	}
 
-	if (occupiedSpots >= parkingSpots.Length)
+	if (occupiedSpots >= parkingZone.Length)
 		return true;
 
 	return false;
 }
 
-void calculateCentsPerSecond(int cents)
+void calculateSecondsPerCent(int cents)
 {
 	int seconds = 0;
 	seconds = 1 * 3600 / cents;
@@ -177,20 +190,54 @@ void calculateCentsPerSecond(int cents)
 	Console.WriteLine(seconds);
 }
 
-var rand = new Random();
-var parkingOneSpots = new DateTime[rand.Next(1, 10)];
+void setupParkingZone(DateTime[] parkingZone) 
+{
+	for	(int i = 0; i < parkingZone.Length; i++) 
+	{
+		parkingZone[i] = new DateTime();	
+	}
+}
+
+void displayAllParkingSpots(DateTime[] parkingZone) 
+{
+	for (int i = 0; i < parkingZone.Length; i++) 
+	{
+		Console.WriteLine(parkingZone[i]);
+	}
+}
+
+void parkCar(DateTime[] parkingZone, int seconds)
+{
+	DateTime now = DateTime.Now;
+	DateTime totalTime = now.AddSeconds(seconds);
+
+	for (int i = 0; i < parkingZone.Length; i++)
+	{
+		if (parkingZone[i] == new DateTime())
+        {
+			parkingZone[i] = totalTime;
+			Console.WriteLine("Isto é o ticket!!!");
+			Console.WriteLine("ID=" + i + "; DURACAO=" + totalTime);
+			Thread.Sleep(3000);
+			displayMainMenu();
+        }
+	}
+}
+
+void removeCar(DateTime[] parkingZone, int id)
+{
+	if ((id > parkingZone.Length || id < 0) || parkingZone[id] == new DateTime())
+		Console.WriteLine("Não há nenhum carro estacionado nesse lugar.");
+	else
+	{
+		parkingZone[id] = new DateTime();
+		Console.WriteLine("Obrigado pela sua preferência.");
+	}
+}
+
 
 displayMainMenu();
- /*
-for (int i = 0; i < parkingOneSpots.Length; i++)
-{
-	Console.WriteLine(parkingOneSpots[i]);
-}
-*/ 
 
-// Add time to DateTime
-DateTime now = DateTime.Now;
-DateTime total = now.AddSeconds(60);
 
 /*
 // DateTime comparision is possible
@@ -198,7 +245,10 @@ if (total > now) {
 	Console.WriteLine(true);
 }
 */
+
+
 /*
+// Encrypt password
 //https://stackoverflow.com/questions/38816004/simple-string-encryption-without-dependencies
 string cryptString(string input)
 {
@@ -238,4 +288,3 @@ addToAge(12);
 
 Console.WriteLine(getAge());
 */
-
