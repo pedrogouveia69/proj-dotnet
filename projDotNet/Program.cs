@@ -67,7 +67,7 @@ int selectOption(int optionsLength)
 
 void displayMainMenu() 
 {
-	var mainMenuOptions = new string[] { "Menu Admin", "Menu Cliente" };
+	string[] mainMenuOptions = { "Menu Admin", "Menu Cliente" };
 	displayMenu("Bem-vindo", mainMenuOptions);
 	int option = selectOption(mainMenuOptions.Length);
 	switch (option)
@@ -94,21 +94,15 @@ void displayMainMenu()
 
 void displayAdminMenu() 
 {
-	var adminMenuOptions = new string[] { "Ver Zonas", "Ver Histórico", "Ver Máquinas", "displayAllParkingSpots()", "Voltar" };
+	string[] adminMenuOptions = { "Ver Zonas", "Ver Histórico", "Ver Máquinas", "displayAllParkingSpots()", "Voltar" };
 	displayMenu("Menu Admin", adminMenuOptions);
 	int option = selectOption(adminMenuOptions.Length);
 	switch (option)
 	{
 		case 4:
-			Console.WriteLine("Zona 1");
-			displayAllParkingSpots(parkingOne);
-			Console.WriteLine();
-			Console.WriteLine("Zona 2");
-			displayAllParkingSpots(parkingTwo);
-			Console.WriteLine();
-			Console.WriteLine("Zona 3");
-			displayAllParkingSpots(parkingThree);
-			Console.WriteLine();
+			displayAllParkingSpots(1, parkingOne);
+			displayAllParkingSpots(2, parkingTwo);
+			displayAllParkingSpots(3, parkingThree);
 			Console.ReadLine();
 			displayMainMenu();
 			break;
@@ -120,7 +114,7 @@ void displayAdminMenu()
 
 void displayClientMenu()
 {
-	var clientMenuOptions = new string[] { "Estacionar", "Remover Carro", "Voltar" };
+	string[] clientMenuOptions = { "Estacionar", "Remover Carro", "Voltar" };
 	displayMenu("Menu Cliente", clientMenuOptions);
 
 	int option = selectOption(clientMenuOptions.Length);
@@ -140,7 +134,7 @@ void displayClientMenu()
 
 void displayParkingZones(bool userIsParking)
 {
-	var zoneOptions = new string[] { "Zona 1", "Zona 2", "Zona 3", "Voltar" };
+	string[] zoneOptions = { "Zona 1", "Zona 2", "Zona 3", "Voltar" };
 	displayMenu("Selecione uma zona: ", zoneOptions);
 	int option = selectOption(zoneOptions.Length);
 
@@ -187,11 +181,11 @@ void displayParkingZones(bool userIsParking)
 
 void insertCoins(DateTime[] parkingZone, int centsPerHour, int maxTimeSeconds)
 {
-	var now = DateTime.Now;
-	var duration = now.AddSeconds(getSecondsPerSingleCent(centsPerHour) * totalCents);
+	var dateTimeNow = DateTime.Now;
+	var duration = dateTimeNow.AddSeconds(getSecondsPerSingleCent(centsPerHour) * totalCents);
 
-	var coinsForDisplay = new string[] { "0.05€", "0.10€", "0.20€", "0.50€", "1.00€", "2.00€", "Confirmar", "Cancelar" };
-	var coinsForCalc = new int[] { 5, 10, 20, 50, 100, 200 };
+	string[] coinsForDisplay = { "0.05€", "0.10€", "0.20€", "0.50€", "1.00€", "2.00€", "Confirmar", "Cancelar" };
+	int[] coinsForCalc = { 5, 10, 20, 50, 100, 200 };
 
 	displayMenu("Insira uma Moeda", coinsForDisplay);
 
@@ -208,7 +202,7 @@ void insertCoins(DateTime[] parkingZone, int centsPerHour, int maxTimeSeconds)
 		Console.WriteLine();
 	}
 
-	if (duration > now.AddSeconds(maxTimeSeconds) && maxTimeSeconds != -1)
+	if (duration > dateTimeNow.AddSeconds(maxTimeSeconds) && maxTimeSeconds != -1)
 	{
 		Console.WriteLine("Excedeu o tempo máximo permitido.");
 		totalCents = 0;
@@ -251,6 +245,7 @@ bool passwordIsCorrect(string password)
 {
 	if (password == adminPassword)
 		return true;
+
 	return false;
 }
 
@@ -274,12 +269,22 @@ int getSecondsPerSingleCent(int centsPerHour)
 	return 1 * 3600 / centsPerHour;
 }
 
-void displayAllParkingSpots(DateTime[] parkingZone) 
+void displayAllParkingSpots(int zoneNumber, DateTime[] parkingZone) 
 {
+	var dateTimeNow = DateTime.Now;
+
+	Console.WriteLine();
+	Console.WriteLine("Zona " + zoneNumber + ": ");
 	for (int i = 0; i < parkingZone.Length; i++) 
 	{
-		Console.WriteLine(parkingZone[i]);
+		if (parkingZone[i] == new DateTime())
+			Console.WriteLine("[ Lugar disponível ]");
+		else if (dateTimeNow > parkingZone[i])
+			Console.WriteLine("[ Carro execede o tempo pago! " + parkingZone[i] + "]");
+		else
+			Console.WriteLine("[ Lugar ocupado até: " + parkingZone[i] + "]");
 	}
+	
 }
 
 void parkCar(DateTime[] parkingZone, DateTime duration)
@@ -289,6 +294,7 @@ void parkCar(DateTime[] parkingZone, DateTime duration)
 		if (parkingZone[i] == new DateTime())
         {
 			parkingZone[i] = duration;
+			Console.Clear();
 			Console.WriteLine("Isto é o ticket!!!");
 			Console.WriteLine("ID=" + i + "; DURACAO=" + duration);
 			totalCents = 0;
