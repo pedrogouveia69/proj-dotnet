@@ -1,20 +1,28 @@
 ﻿using System.Text;
-
-int num; // = 0
-DateTime date; // = 01-Jan-01 00:00:00
-
+Console.OutputEncoding = Encoding.UTF8;
 
 var rand = new Random();
 var parkingOne = new DateTime[rand.Next(1, 10)];
 var parkingTwo = new DateTime[rand.Next(1, 10)];
 var parkingThree = new DateTime[rand.Next(1, 10)];
 
-int totalInCents = 0;
+int parkingOneCentsPerHour = 115;
+int parkingTwoCentsPerHour = 100;
+int parkingThreeCentsPerHour = 62;
 
+int parkingOneMaxSeconds = 2700;
+int parkingTwoMaxSeconds = 7200;
+int parkingThreeMaxSeconds = -1;
+
+int totalCents = 0;
+
+string adminPassword = "1234";
 
 setupParkingZone(parkingOne);
 setupParkingZone(parkingTwo);
 setupParkingZone(parkingThree);
+
+displayMainMenu();
 
 void setupParkingZone(DateTime[] parkingZone)
 {
@@ -26,23 +34,24 @@ void setupParkingZone(DateTime[] parkingZone)
 
 void displayMenu(string title, string[] options) 
 {
+	// mostrar "parque fechado" conforme as horas/dias
     Console.Clear();
     Console.WriteLine(title);
     for (int i = 0; i < options.Length; i++) {
         Console.WriteLine(i + 1 + " - " + options[i]);
     }
-	Console.Write("Escolha uma opção: ");
+	
 }
 
-int checkIfValidOption(int optionsLength)
+int selectOption(int optionsLength)
 {
+	Console.Write("Escolha uma opção: ");
 	string optionStr = Console.ReadLine();
 
 	if (string.IsNullOrEmpty(optionStr))
 	{
 		Console.WriteLine("Não foi selecionada nenhuma opção!");
-		Console.Write("Escolha uma opção: ");
-		return checkIfValidOption(optionsLength);
+		return selectOption(optionsLength);
 	}
 
 	int option;
@@ -50,8 +59,7 @@ int checkIfValidOption(int optionsLength)
 	if (!tryParse || (option < 1 || option > optionsLength))
 	{
 		Console.WriteLine("Opção inválida!");
-		Console.Write("Escolha uma opção: ");
-		return checkIfValidOption(optionsLength);
+		return selectOption(optionsLength);
 	}
 
 	return option;
@@ -61,7 +69,7 @@ void displayMainMenu()
 {
 	var mainMenuOptions = new string[] { "Menu Admin", "Menu Cliente" };
 	displayMenu("Bem-vindo", mainMenuOptions);
-	int option = checkIfValidOption(mainMenuOptions.Length);
+	int option = selectOption(mainMenuOptions.Length);
 	switch (option)
 	{
 		case 1:
@@ -88,7 +96,7 @@ void displayAdminMenu()
 {
 	var adminMenuOptions = new string[] { "Ver Zonas", "Ver Histórico", "Ver Máquinas", "displayAllParkingSpots()", "Voltar" };
 	displayMenu("Menu Admin", adminMenuOptions);
-	int option = checkIfValidOption(adminMenuOptions.Length);
+	int option = selectOption(adminMenuOptions.Length);
 	switch (option)
 	{
 		case 4:
@@ -115,7 +123,7 @@ void displayClientMenu()
 	var clientMenuOptions = new string[] { "Estacionar", "Remover Carro", "Voltar" };
 	displayMenu("Menu Cliente", clientMenuOptions);
 
-	int option = checkIfValidOption(clientMenuOptions.Length);
+	int option = selectOption(clientMenuOptions.Length);
 	switch (option)
 	{
 		case 1:
@@ -130,14 +138,11 @@ void displayClientMenu()
 	}
 }
 
-//receber argumento estacionar ou remover
 void displayParkingZones(bool userIsParking)
 {
-	var zoneOptions = new string[] { "Zona 1", "Zona 2", "Zona 3" };
+	var zoneOptions = new string[] { "Zona 1", "Zona 2", "Zona 3", "Voltar" };
 	displayMenu("Selecione uma zona: ", zoneOptions);
-	int option = checkIfValidOption(zoneOptions.Length);
-
-	//variaveis com preço p/hora e tempo maximo
+	int option = selectOption(zoneOptions.Length);
 
 	if (userIsParking)
 	{
@@ -151,15 +156,18 @@ void displayParkingZones(bool userIsParking)
 					displayParkingZones(true);
 				}
 				else
-					parkCar(parkingOne, 120);
+					insertCoins(parkingOne, parkingOneCentsPerHour, parkingOneMaxSeconds);
 				break;
 
 			case 2:
-				inserirMoedas();
+				
 				break;
 
 			case 3:
-				inserirMoedas();
+				
+				break;
+			case 4:
+				displayClientMenu();
 				break;
 		}
 	}
@@ -177,57 +185,73 @@ void displayParkingZones(bool userIsParking)
 	}
 };
 
-//no need for else
-bool passwordIsCorrect(string password)
+void insertCoins(DateTime[] parkingZone, int centsPerHour, int maxTimeSeconds)
 {
-	string correctPassword = "1234";
-	if (password == correctPassword)
-    {
-		return true;
-    }
-    else
-    {
-		return false;
-    }
-}
+	var now = DateTime.Now;
+	var duration = now.AddSeconds(getSecondsPerSingleCent(centsPerHour) * totalCents);
 
-// ta tudo fodido
-void inserirMoedas()
-{
-	int[] coinCalc = new int[] { 5, 10, 20, 50, 100, 200 };
-	var coinDisplay = new string[] { "0.05€", "0.10€", "0.20€", "0.50€", "1.00€", "2.00€" , "Confirmar", "Reset"};
-	
-	displayMenu("Insira uma Moeda", coinDisplay);
-	//falta casas decimais
-	Console.WriteLine("\nTotal: " + (float)totalInCents/100 + "€");
-	int option = checkIfValidOption(coinDisplay.Length);
+	var coinsForDisplay = new string[] { "0.05€", "0.10€", "0.20€", "0.50€", "1.00€", "2.00€", "Confirmar", "Cancelar" };
+	var coinsForCalc = new int[] { 5, 10, 20, 50, 100, 200 };
+
+	displayMenu("Insira uma Moeda", coinsForDisplay);
+
+	Console.WriteLine("\nCusto por hora: " + (float)centsPerHour/100 + "€");
+	if (maxTimeSeconds != -1) 
+	{
+		Console.WriteLine("Tempo máximo permitido: " + maxTimeSeconds/60 + " minutos");
+		Console.WriteLine();
+	}
+
+	if (totalCents != 0) { 
+		Console.WriteLine("Total: " + (float)totalCents/100 + "€");     //faltam casas decimais
+		Console.WriteLine("Duração: " + duration);
+		Console.WriteLine();
+	}
+
+	if (duration > now.AddSeconds(maxTimeSeconds) && maxTimeSeconds != -1)
+	{
+		Console.WriteLine("Excedeu o tempo máximo permitido.");
+		totalCents = 0;
+		Thread.Sleep(3000);
+		insertCoins(parkingZone, centsPerHour, maxTimeSeconds);
+	}
+
+	int option = selectOption(coinsForDisplay.Length);
 
 	while (option != 7 && option != 8)
 	{
-		for (int i = 0; i < coinCalc.Length; i++)
+		for (int i = 0; i < coinsForCalc.Length; i++)
 		{
 			if (option - 1 == i)
 			{
-				totalInCents += coinCalc[i];
+				totalCents += coinsForCalc[i];
 			}
 		}
-		inserirMoedas();
+		insertCoins(parkingZone, centsPerHour, maxTimeSeconds);
 	}
-	if ((option == 7 || option == 8) && totalInCents < 5)
+
+	if (option == 7 && totalCents == 0)
     {
-		Console.WriteLine("Não é possível confirmar/fazer reset sem introduzir dinheiro.");
+		Console.WriteLine("Não é possível Confirmar sem introduzir dinheiro.");
 		Thread.Sleep(3000);
-		inserirMoedas();
+		insertCoins(parkingZone, centsPerHour, maxTimeSeconds);
 	}
 	else if (option == 7)
     {
-		parkCar(parkingOne, getSecondsPerCent(115) * totalInCents);
+		parkCar(parkingZone, duration);
     }	
 	else if (option == 8)
     {
-		totalInCents = 0;
-		inserirMoedas();
-    }
+		totalCents = 0;
+		displayMainMenu();
+	}
+}
+
+bool passwordIsCorrect(string password)
+{
+	if (password == adminPassword)
+		return true;
+	return false;
 }
 
 bool parkIsFull(DateTime[] parkingZone)
@@ -245,10 +269,9 @@ bool parkIsFull(DateTime[] parkingZone)
 	return false;
 }
 
-// remove uneeded variable
-int getSecondsPerCent(int cents)
+int getSecondsPerSingleCent(int centsPerHour)
 {
-	return 1 * 3600 / cents;
+	return 1 * 3600 / centsPerHour;
 }
 
 void displayAllParkingSpots(DateTime[] parkingZone) 
@@ -259,19 +282,16 @@ void displayAllParkingSpots(DateTime[] parkingZone)
 	}
 }
 
-void parkCar(DateTime[] parkingZone, int seconds)
+void parkCar(DateTime[] parkingZone, DateTime duration)
 {
-	DateTime now = DateTime.Now;
-	DateTime totalTime = now.AddSeconds(seconds);
-
 	for (int i = 0; i < parkingZone.Length; i++)
 	{
 		if (parkingZone[i] == new DateTime())
         {
-			parkingZone[i] = totalTime;
+			parkingZone[i] = duration;
 			Console.WriteLine("Isto é o ticket!!!");
-			Console.WriteLine("ID=" + i + "; DURACAO=" + totalTime);
-			totalInCents = 0;
+			Console.WriteLine("ID=" + i + "; DURACAO=" + duration);
+			totalCents = 0;
 			Thread.Sleep(5000);
 			displayMainMenu();
         }
@@ -295,22 +315,12 @@ void removeCar(DateTime[] parkingZone, int id)
 	else
 	{
 		parkingZone[id] = new DateTime();
+		Console.Clear();
 		Console.WriteLine("Obrigado pela sua preferência.");
 		Thread.Sleep(3000);
 		displayMainMenu();
 	}
 }
-
-inserirMoedas();
-//displayMainMenu();
-
-/*
-// DateTime comparision is possible
-if (total > now) {
-	Console.WriteLine(true);
-}
-*/
-
 
 /*
 // Encrypt password
