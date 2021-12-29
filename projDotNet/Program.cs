@@ -34,12 +34,25 @@ void setupParkingZone(DateTime[] parkingZone)
 
 void displayMenu(string title, string[] options) 
 {
-	// mostrar "parque fechado" conforme as horas/dias
-    Console.Clear();
-    Console.WriteLine(title);
-    for (int i = 0; i < options.Length; i++) {
-        Console.WriteLine(i + 1 + " - " + options[i]);
+	var dateTimeNow = DateTime.Now;
+	if ((int)dateTimeNow.DayOfWeek == 3 && dateTimeNow.Hour < 9 && dateTimeNow.Hour > 14) || (dateTimeNow.Hour < 9 && dateTimeNow.Hour > 20))
+    {
+		Console.WriteLine("O parque está fechado");
+		Console.WriteLine("Horário de funcionamento");
+		Console.WriteLine("Dias de semana 9:00 - 20:00");
+		Console.WriteLine("Sabados das 9:00 - 14:00");
+		Console.WriteLine("Domingos Encerrado");
     }
+	else
+    {
+		Console.Clear();
+		Console.WriteLine(title);
+		for (int i = 0; i < options.Length; i++)
+		{
+			Console.WriteLine(i + 1 + " - " + options[i]);
+		}
+	}
+
 	
 }
 
