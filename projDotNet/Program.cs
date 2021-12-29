@@ -32,19 +32,20 @@ void setupParkingZone(DateTime[] parkingZone)
 	}
 }
 
-void displayMenu(string title, string[] options) 
+void displayMenu(string title, string[] options)
 {
 	var dateTimeNow = DateTime.Now;
-	if ((int)dateTimeNow.DayOfWeek == 3 && dateTimeNow.Hour < 9 && dateTimeNow.Hour > 14) || (dateTimeNow.Hour < 9 && dateTimeNow.Hour > 20))
-    {
+	if ((dateTimeNow.DayOfWeek == DayOfWeek.Wednesday) || (dateTimeNow.DayOfWeek == DayOfWeek.Saturday && dateTimeNow.Hour < 9 && dateTimeNow.Hour > 14) || (dateTimeNow.Hour < 9 && dateTimeNow.Hour > 20))
+	{
 		Console.WriteLine("O parque está fechado");
 		Console.WriteLine("Horário de funcionamento");
 		Console.WriteLine("Dias de semana 9:00 - 20:00");
 		Console.WriteLine("Sabados das 9:00 - 14:00");
-		Console.WriteLine("Domingos Encerrado");
-    }
+		Console.WriteLine("Domingos Encerrado");		
+		//falta encerrar programa
+	}
 	else
-    {
+	{
 		Console.Clear();
 		Console.WriteLine(title);
 		for (int i = 0; i < options.Length; i++)
@@ -52,8 +53,6 @@ void displayMenu(string title, string[] options)
 			Console.WriteLine(i + 1 + " - " + options[i]);
 		}
 	}
-
-	
 }
 
 int selectOption(int optionsLength)
@@ -78,7 +77,7 @@ int selectOption(int optionsLength)
 	return option;
 }
 
-void displayMainMenu() 
+void displayMainMenu()
 {
 	string[] mainMenuOptions = { "Menu Admin", "Menu Cliente" };
 	displayMenu("Bem-vindo", mainMenuOptions);
@@ -89,15 +88,15 @@ void displayMainMenu()
 			Console.WriteLine("Insira a palavra-passe: ");
 			string passsword = Console.ReadLine();
 			if (!passwordIsCorrect(passsword) || string.IsNullOrEmpty(passsword))
-            {
+			{
 				Console.WriteLine("Password Incorreta");
 				Thread.Sleep(3000);
 				displayMainMenu();
-			} 
+			}
 			else
-            {
+			{
 				displayAdminMenu();
-            }
+			}
 			break;
 		case 2:
 			displayClientMenu();
@@ -105,21 +104,24 @@ void displayMainMenu()
 	}
 }
 
-void displayAdminMenu() 
+void displayAdminMenu()
 {
-	string[] adminMenuOptions = { "Ver Zonas", "Ver Histórico", "Ver Máquinas", "displayAllParkingSpots()", "Voltar" };
+	string[] adminMenuOptions = { "Ver Zonas", "Ver Total Dinheiro" , "Voltar" };
 	displayMenu("Menu Admin", adminMenuOptions);
 	int option = selectOption(adminMenuOptions.Length);
 	switch (option)
 	{
-		case 4:
+		case 1:
 			displayAllParkingSpots(1, parkingOne);
 			displayAllParkingSpots(2, parkingTwo);
 			displayAllParkingSpots(3, parkingThree);
 			Console.ReadLine();
 			displayMainMenu();
 			break;
-		case 5:
+		case 2:
+			//falta ver total
+			break;
+		case 3:
 			displayMainMenu();
 			break;
 	}
@@ -167,11 +169,11 @@ void displayParkingZones(bool userIsParking)
 				break;
 
 			case 2:
-				
+				// falta parque 2
 				break;
 
 			case 3:
-				
+				// falta parque 3
 				break;
 			case 4:
 				displayClientMenu();
@@ -187,6 +189,15 @@ void displayParkingZones(bool userIsParking)
 				// needs empty/null verification
 				int id = int.Parse(Console.ReadLine());
 				removeCar(parkingOne, id);
+				break;
+			case 2:
+				// falta parque 2
+				break;
+			case 3:
+				// falta parque 3
+				break;
+			case 4:
+				displayClientMenu();
 				break;
 		}
 	}
