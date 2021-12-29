@@ -15,6 +15,7 @@ int parkingTwoMaxSeconds = 7200;
 int parkingThreeMaxSeconds = -1;
 
 int totalCents = 0;
+int totalDinheiroAcumulado = 0;
 
 string adminPassword = "1234";
 
@@ -35,7 +36,7 @@ void setupParkingZone(DateTime[] parkingZone)
 void displayMenu(string title, string[] options)
 {
 	var dateTimeNow = DateTime.Now;
-	if ((dateTimeNow.DayOfWeek == DayOfWeek.Wednesday) || (dateTimeNow.DayOfWeek == DayOfWeek.Saturday && dateTimeNow.Hour < 9 && dateTimeNow.Hour > 14) || (dateTimeNow.Hour < 9 && dateTimeNow.Hour > 20))
+	if ((dateTimeNow.DayOfWeek == DayOfWeek.Sunday) || (dateTimeNow.DayOfWeek == DayOfWeek.Saturday && dateTimeNow.Hour < 9 && dateTimeNow.Hour > 14) || (dateTimeNow.Hour < 9 && dateTimeNow.Hour > 20))
 	{
 		Console.WriteLine("O parque está fechado");
 		Console.WriteLine("Horário de funcionamento");
@@ -79,12 +80,12 @@ int selectOption(int optionsLength)
 
 void displayMainMenu()
 {
-	string[] mainMenuOptions = { "Menu Admin", "Menu Cliente" };
+	string[] mainMenuOptions = { "Menu Cliente" , "Menu Admin" };
 	displayMenu("Bem-vindo", mainMenuOptions);
 	int option = selectOption(mainMenuOptions.Length);
 	switch (option)
 	{
-		case 1:
+		case 2:
 			Console.WriteLine("Insira a palavra-passe: ");
 			string passsword = Console.ReadLine();
 			if (!passwordIsCorrect(passsword) || string.IsNullOrEmpty(passsword))
@@ -98,7 +99,7 @@ void displayMainMenu()
 				displayAdminMenu();
 			}
 			break;
-		case 2:
+		case 1:
 			displayClientMenu();
 			break;
 	}
@@ -119,7 +120,9 @@ void displayAdminMenu()
 			displayMainMenu();
 			break;
 		case 2:
-			//falta ver total
+			Console.WriteLine("Total Acumulado: " + totalDinheiroAcumulado);
+			Console.ReadLine();
+			displayMainMenu();
 			break;
 		case 3:
 			displayMainMenu();
@@ -169,11 +172,25 @@ void displayParkingZones(bool userIsParking)
 				break;
 
 			case 2:
-				// falta parque 2
+				if (parkIsFull(parkingTwo))
+				{
+					Console.WriteLine("Este parque está cheio.");
+					Thread.Sleep(3000);
+					displayParkingZones(true);
+				}
+				else
+					insertCoins(parkingTwo, parkingTwoCentsPerHour, parkingTwoMaxSeconds);
 				break;
 
 			case 3:
-				// falta parque 3
+				if (parkIsFull(parkingThree))
+				{
+					Console.WriteLine("Este parque está cheio.");
+					Thread.Sleep(3000);
+					displayParkingZones(true);
+				}
+				else
+					insertCoins(parkingThree, parkingThreeCentsPerHour, parkingThreeMaxSeconds);
 				break;
 			case 4:
 				displayClientMenu();
@@ -186,14 +203,22 @@ void displayParkingZones(bool userIsParking)
 		{
 			case 1:
 				Console.WriteLine("Introduza o ID");
-				// needs empty/null verification
+				// needs empty/null verification +  ID
 				int id = int.Parse(Console.ReadLine());
 				removeCar(parkingOne, id);
 				break;
 			case 2:
+				Console.WriteLine("Introduza o ID");
+				// needs empty/null verification +  ID
+				int id2 = int.Parse(Console.ReadLine());
+				removeCar(parkingTwo, id2);
 				// falta parque 2
 				break;
 			case 3:
+				Console.WriteLine("Introduza o ID");
+				// needs empty/null verification +  ID
+				int id3 = int.Parse(Console.ReadLine());
+				removeCar(parkingThree, id3);
 				// falta parque 3
 				break;
 			case 4:
@@ -256,6 +281,7 @@ void insertCoins(DateTime[] parkingZone, int centsPerHour, int maxTimeSeconds)
 	}
 	else if (option == 7)
     {
+		totalDinheiroAcumulado += totalCents;
 		parkCar(parkingZone, duration);
     }	
 	else if (option == 8)
