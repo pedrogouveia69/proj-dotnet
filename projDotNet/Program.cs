@@ -48,11 +48,13 @@ void displayMenu(string title, string[] options)
 	else
 	{
 		Console.Clear();
-		Console.WriteLine(title);
+		Console.WriteLine("----- " + title + " -----");
 		for (int i = 0; i < options.Length; i++)
 		{
-			Console.WriteLine(i + 1 + " - " + options[i]);
+			Console.WriteLine("   " + (i + 1) + " - " + options[i]);
 		}
+
+		Console.WriteLine("------------------");
 	}
 }
 
@@ -346,7 +348,7 @@ void parkCar(DateTime[] parkingZone, DateTime duration)
 			parkingZone[i] = duration;
 			Console.Clear();
 			Console.WriteLine("Isto é o ticket!!!");
-			Console.WriteLine("ID=" + i + "; DURACAO=" + duration);
+			Console.WriteLine("ID=" + i + "; DURACAO=" + duration);	//alterar
 			totalCents = 0;
 			Thread.Sleep(5000);
 			displayMainMenu();
