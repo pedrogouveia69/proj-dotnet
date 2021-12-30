@@ -43,7 +43,7 @@ void displayMenu(string title, string[] options)
 {
 	// O horário de funcionamento dos parquímetros é das 9h às 20h durante os dia úteis e das 9h às 14h nos sábados.
 	var dateTimeNow = DateTime.Now;
-	if ((dateTimeNow.DayOfWeek == DayOfWeek.Sunday) || (dateTimeNow.DayOfWeek == DayOfWeek.Saturday && dateTimeNow.Hour < 9 || dateTimeNow.Hour >= 14) || (dateTimeNow.Hour < 9 || dateTimeNow.Hour >= 20))
+	if ((dateTimeNow.DayOfWeek == DayOfWeek.Sunday) || (dateTimeNow.DayOfWeek == DayOfWeek.Saturday && (dateTimeNow.Hour < 9 || dateTimeNow.Hour >= 14)) || (dateTimeNow.Hour < 9 || dateTimeNow.Hour >= 20))
 	//if (false)
 	{
 		Console.WriteLine("////  O parque está encerrado.  ////");
