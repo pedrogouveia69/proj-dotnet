@@ -19,7 +19,7 @@ int parkingTwoMaxSeconds = 7200;
 int parkingThreeCentsPerHour = 62;
 int parkingThreeMaxSeconds = -1;
 
-int totalInsertedCents = 0;
+int insertedCents = 0;
 int totalAccumulatedCents = 0;
 
 string adminPassword = "1234";
@@ -222,7 +222,7 @@ void displayParkingZones(bool userIsParking)
 
 void insertCoins(int zoneNumber, DateTime[] parkingZone, int centsPerHour, int maxTimeSeconds)
 {
-	int seconds = getSecondsPerSingleCent(centsPerHour) * totalInsertedCents;
+	int seconds = getSeconds(centsPerHour, insertedCents);
 
 	var dateTimeNow = DateTime.Now;
 	var duration = dateTimeNow.AddSeconds(seconds);
@@ -253,8 +253,8 @@ void insertCoins(int zoneNumber, DateTime[] parkingZone, int centsPerHour, int m
 	// O utilizador deverá ver a informação mencionada e inserir uma ou várias moedas, cujo total é mostrado no visor.
 	// O utilizador poderá fazer reset ou confirmar a operação.
 	// O tempo de estacionamento deverá ser calculado com base no montante recebido e deverá ser mostrado ao utilizador.
-	if (totalInsertedCents != 0) {
-		float totalEuros = (float)totalInsertedCents/100;
+	if (insertedCents != 0) {
+		float totalEuros = (float)insertedCents/100;
 		Console.WriteLine("\nTotal: " + totalEuros.ToString("n2") + "€");
 		Console.WriteLine("Duração: " + duration);
 		Console.WriteLine();
@@ -264,7 +264,7 @@ void insertCoins(int zoneNumber, DateTime[] parkingZone, int centsPerHour, int m
 	if (duration > dateTimeNow.AddSeconds(maxTimeSeconds) && maxTimeSeconds != -1)
 	{
 		Console.WriteLine("Excedeu o tempo máximo permitido.");
-		totalInsertedCents = 0;
+		insertedCents = 0;
 		pressKeyToContinue();
 		insertCoins(zoneNumber, parkingZone, centsPerHour, maxTimeSeconds);
 	}
@@ -276,12 +276,12 @@ void insertCoins(int zoneNumber, DateTime[] parkingZone, int centsPerHour, int m
 		for (int i = 0; i < coinsForCalc.Length; i++)
 		{
 			if (option - 1 == i)
-				totalInsertedCents += coinsForCalc[i];
+				insertedCents += coinsForCalc[i];
 		}
 		insertCoins(zoneNumber, parkingZone, centsPerHour, maxTimeSeconds);
 	}
 
-	if (option == 7 && totalInsertedCents == 0)
+	if (option == 7 && insertedCents == 0)
     {
 		Console.WriteLine("Não é possível Confirmar sem introduzir dinheiro.");
 		pressKeyToContinue();
@@ -289,12 +289,12 @@ void insertCoins(int zoneNumber, DateTime[] parkingZone, int centsPerHour, int m
 	}
 	else if (option == 7)
     {
-		totalAccumulatedCents += totalInsertedCents;
+		totalAccumulatedCents += insertedCents;
 		parkCar(zoneNumber, parkingZone, duration);
     }	
 	else if (option == 8)
     {
-		totalInsertedCents = 0;
+		insertedCents = 0;
 		displayClientMenu();
 	}
 }
@@ -338,10 +338,14 @@ int getIdFromUser()
 	return id;
 }
 
-// Regra de 3 simples para obter segundos p/cêntimo
-int getSecondsPerSingleCent(int centsPerHour)
+int getSeconds(int centsPerHour, int insertedCents)
 {
-	return 1 * 3600 / centsPerHour;
+	//  centsPerHour ------- 3600 seconds
+	// insertedCents -------  𝑥 seconds
+
+	// This function returns 𝑥
+
+	return insertedCents * 3600 / centsPerHour;
 }
 
 void displayAllParkingSpots(int zoneNumber, DateTime[] parkingZone) 
@@ -377,7 +381,7 @@ void parkCar(int zoneNumber, DateTime[] parkingZone, DateTime duration)
 			Console.WriteLine(" O seu ID é " + (i + 1));
 			Console.WriteLine(" O estacionamento é válido até " + duration);
 			Console.WriteLine("--------------------------------------------------");
-			totalInsertedCents = 0;
+			insertedCents = 0;
 			pressKeyToContinue();
 			displayMainMenu();
         }
