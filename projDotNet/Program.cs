@@ -33,9 +33,9 @@ displayMainMenu();
 
 void setupParkingZone(DateTime[] parkingZone)
 {
-	for (int i = 0; i < parkingZone.Length; i++)
+	for (int i = 0; i < parkingZone.Length; i++) //prencher arrays do park com lugares vazios 
 	{
-		parkingZone[i] = new DateTime();
+		parkingZone[i] = new DateTime(); // é igual 01/01/0001 00:00:00
 	}
 }
 
@@ -63,7 +63,7 @@ void displayMenu(string title, string[] options)
 		{
 			Console.WriteLine("   " + (i + 1) + " - " + options[i]);
 		}
-		string hyphens = "----------------";
+		string hyphens = "----------------"; //total dos hifens de cima mais os carateres da palavra
 		for (int j = 0; j < title.Length; j++){ hyphens += "-"; }
 		Console.WriteLine(hyphens);
 	}
@@ -224,8 +224,8 @@ void insertCoins(int zoneNumber, DateTime[] parkingZone, int centsPerHour, int m
 {
 	int seconds = getSeconds(centsPerHour, insertedCents);
 
-	var dateTimeNow = DateTime.Now;
-	var duration = dateTimeNow.AddSeconds(seconds);
+	var dateTimeNow = DateTime.Now; // vai buscar data atual
+	var duration = dateTimeNow.AddSeconds(seconds); // adiciona segundos conforme a(s) moeda(s) introduzida(s)
 
 	string[] coinsForDisplay = { "0.05€", "0.10€", "0.20€", "0.50€", "1.00€", "2.00€", "Confirmar", "Cancelar" };
 	int[] coinsForCalc = { 5, 10, 20, 50, 100, 200 };
