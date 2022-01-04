@@ -43,7 +43,8 @@ void displayMenu(string title, string[] options)
 {
 	// O horário de funcionamento dos parquímetros é das 9h às 20h durante os dia úteis e das 9h às 14h nos sábados.
 	var dateTimeNow = DateTime.Now;
-	if ((dateTimeNow.DayOfWeek == DayOfWeek.Sunday) || (dateTimeNow.DayOfWeek == DayOfWeek.Saturday && (dateTimeNow.Hour < 9 || dateTimeNow.Hour >= 14)) || (dateTimeNow.Hour < 9 || dateTimeNow.Hour >= 20))
+	if ((dateTimeNow.DayOfWeek == DayOfWeek.Sunday) || (dateTimeNow.DayOfWeek == DayOfWeek.Saturday &&
+		(dateTimeNow.Hour < 9 || dateTimeNow.Hour >= 14)) || (dateTimeNow.Hour < 9 || dateTimeNow.Hour >= 20))
 	//if (false)
 	{
 		Console.WriteLine("////  O parque está encerrado.  ////");
@@ -69,7 +70,7 @@ void displayMenu(string title, string[] options)
 	}
 }
 
-int selectOption(int optionsLength)
+int selectOption(int optionsLength) //https://codeasy.net/lesson/input_validation
 {
 	Console.Write("Escolha uma opção: ");
 	string optionStr = Console.ReadLine();
@@ -263,6 +264,8 @@ void insertCoins(int zoneNumber, DateTime[] parkingZone, int centsPerHour, int m
 
 	if (duration > dateTimeNow.AddSeconds(maxTimeSeconds) && maxTimeSeconds != -1)
 	{
+		Console.SetCursorPosition(0, Console.CursorTop - 1);
+		ClearCurrentConsoleLine();
 		Console.WriteLine("Excedeu o tempo máximo permitido.");
 		insertedCents = 0;
 		pressKeyToContinue();
@@ -415,6 +418,15 @@ void removeCar(DateTime[] parkingZone, int id)
 
 void pressKeyToContinue()
 {
-	Console.WriteLine("\nPressione qualquer tecla para continuar.");
+	Console.WriteLine("\nPressione qualquer tecla para continuar."); // "\n" = "enter"
 	Console.ReadKey(true);
+}
+
+
+void ClearCurrentConsoleLine() //https://stackoverflow.com/questions/8946808/can-console-clear-be-used-to-only-clear-a-line-instead-of-whole-console/8946847
+{
+	int currentLineCursor = Console.CursorTop;
+	Console.SetCursorPosition(0, Console.CursorTop);
+	Console.Write(new string(' ', Console.WindowWidth));
+	Console.SetCursorPosition(0, currentLineCursor);
 }
