@@ -71,7 +71,8 @@ void displayMenu(string title, string[] options)
 	//}
 }
 
-int selectOption(int optionsLength) // MENU DE OPÇOES 
+// MENU DE OPÇOES
+int selectOption(int optionsLength)  
 {
 	Console.Write("Escolha uma opção: ");
 	string optionStr = Console.ReadLine();
@@ -93,7 +94,8 @@ int selectOption(int optionsLength) // MENU DE OPÇOES
 	return option;
 }
 
-void displayMainMenu() // MENU PRINCIPAL
+// MENU PRINCIPAL
+void displayMainMenu() 
 {
 	string[] mainMenuOptions = { "Menu Cliente" , "Menu Admin" };
 	displayMenu("Bem-vindo", mainMenuOptions);
@@ -130,7 +132,8 @@ void displayMainMenu() // MENU PRINCIPAL
 	}
 }
 
-void displayAdminMenu() // MENU DE ADMNISTRADOR
+// MENU DE ADMNISTRADOR
+void displayAdminMenu() 
 {
 	string[] adminMenuOptions = { "Ver Zonas", "Ver Total Dinheiro" , "Voltar" };
 	displayMenu("Menu Admin", adminMenuOptions);
@@ -157,7 +160,8 @@ void displayAdminMenu() // MENU DE ADMNISTRADOR
 	}
 };
 
-void displayClientMenu() // OPÇOES DE ESTACIONAR E REMOVER CARRO
+// OPÇOES DE ESTACIONAR E REMOVER CARRO
+void displayClientMenu() 
 {
 	string[] clientMenuOptions = { "Estacionar", "Remover Carro", "Voltar" };
 	displayMenu("Menu Cliente", clientMenuOptions);
@@ -177,7 +181,8 @@ void displayClientMenu() // OPÇOES DE ESTACIONAR E REMOVER CARRO
 	}
 }
 
-void displayParkingZones(bool userIsParking) // OPÇOES DE MOSTRAR ZONAS
+// OPÇOES DE MOSTRAR ZONAS
+void displayParkingZones(bool userIsParking) 
 {
 	string[] zoneOptions = { "Zona 1", "Zona 2", "Zona 3", "Voltar" };
 	displayMenu("Selecione uma zona", zoneOptions);
@@ -232,7 +237,8 @@ void displayParkingZones(bool userIsParking) // OPÇOES DE MOSTRAR ZONAS
 	}
 };
 
-void insertCoins(int zoneNumber, DateTime[] parkingZone, int centsPerHour, int maxTimeSeconds) // MENU DE CALCULO DE MOEDAS
+// MENU DE CALCULO DE MOEDAS
+void insertCoins(int zoneNumber, DateTime[] parkingZone, int centsPerHour, int maxTimeSeconds) 
 {
 	int seconds = getSeconds(centsPerHour, totalInsertedCents);
 
@@ -288,7 +294,8 @@ void insertCoins(int zoneNumber, DateTime[] parkingZone, int centsPerHour, int m
 
 	int option = selectOption(coinsForDisplay.Length);
 
-	while (option != 7 && option != 8) // OPCOES DE CONFIRMAR E CANCELAR
+	// OPCOES DE CONFIRMAR E CANCELAR
+	while (option != 7 && option != 8) 
 	{
 		for (int i = 0; i < coinsForCalc.Length; i++)
 		{
@@ -304,12 +311,14 @@ void insertCoins(int zoneNumber, DateTime[] parkingZone, int centsPerHour, int m
 		pressKeyToContinue();
 		insertCoins(zoneNumber, parkingZone, centsPerHour, maxTimeSeconds);
 	}
-	else if (option == 7) // CONFIRMAR
+	// CONFIRMAR
+	else if (option == 7) 
     {
 		totalAccumulatedCents += totalInsertedCents;
 		parkCar(zoneNumber, parkingZone, exitTime);
-    }	
-	else if (option == 8) // CANCELAR
+    }
+	// CANCELAR
+	else if (option == 8) 
     {
 		totalInsertedCents = 0;
 		displayClientMenu();
@@ -332,7 +341,8 @@ DateTime checkExitTime(DateTime exitTime, int seconds)
 	return exitTime;
 }
 
-bool parkIsFull(DateTime[] parkingZone) //PARK CHEIO
+//PARK CHEIO
+bool parkIsFull(DateTime[] parkingZone) 
 {
 	int occupiedSpots = 0;
 	for (int i = 0; i < parkingZone.Length; i++)
@@ -350,7 +360,8 @@ bool parkIsFull(DateTime[] parkingZone) //PARK CHEIO
 	return false;
 }
 
-int getIdFromUser() //GET ID PARA REMOVER CARRO
+//GET ID PARA REMOVER CARRO
+int getIdFromUser() 
 {
 	Console.Write("Introduza o seu ID: ");
 	string idStr = Console.ReadLine();
@@ -382,7 +393,8 @@ int getSeconds(int centsPerHour, int insertedCents)
 	return insertedCents * 3600 / centsPerHour;
 }
 
-void displayAllParkingSpots(int zoneNumber, DateTime[] parkingZone) // MENU DE MOSTRAR OS LUGARES 
+// MENU DE MOSTRAR OS LUGARES
+void displayAllParkingSpots(int zoneNumber, DateTime[] parkingZone)  
 {
 	// Ver número de vagas/lugares ocupados em cada zona e carros que exederam o tempo de estacionamento permitido.
 	var dateTimeNow = DateTime.Now;
@@ -400,7 +412,8 @@ void displayAllParkingSpots(int zoneNumber, DateTime[] parkingZone) // MENU DE M
 	}
 }
 
-void parkCar(int zoneNumber, DateTime[] parkingZone, DateTime exitTime)  // FUNÇAO DE ESTACIONAR CARRO
+// FUNÇAO DE ESTACIONAR CARRO
+void parkCar(int zoneNumber, DateTime[] parkingZone, DateTime exitTime)  
 {
 	// Caso o utilizador confirme a operação, durante o tempo estipulado, o lugar deverá estar identificado como indisponível.
 	for (int i = 0; i < parkingZone.Length; i++)
@@ -422,7 +435,8 @@ void parkCar(int zoneNumber, DateTime[] parkingZone, DateTime exitTime)  // FUN�
 	}
 }
 
-void removeCar(DateTime[] parkingZone, int id) //REMOVER CARRO
+//REMOVER CARRO
+void removeCar(DateTime[] parkingZone, int id) 
 {
 	id = id - 1;
 	if ((id > (parkingZone.Length -1) || id < 0))
