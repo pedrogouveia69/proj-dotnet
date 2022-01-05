@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Net05\\Documents\\GitHub\\projDotNet\\projDotNet\\bak\\bak\\projDotNet.csproj": {}
+    "C:\\Users\\Net05\\Documents\\GitHub\\projDotNet\\projDotNet\\projDotNet.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Net05\\Documents\\GitHub\\projDotNet\\projDotNet\\bak\\bak\\projDotNet.csproj": {
+    "C:\\Users\\Net05\\Documents\\GitHub\\projDotNet\\projDotNet\\projDotNet.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Net05\\Documents\\GitHub\\projDotNet\\projDotNet\\bak\\bak\\projDotNet.csproj",
+        "projectUniqueName": "C:\\Users\\Net05\\Documents\\GitHub\\projDotNet\\projDotNet\\projDotNet.csproj",
         "projectName": "projDotNet",
-        "projectPath": "C:\\Users\\Net05\\Documents\\GitHub\\projDotNet\\projDotNet\\bak\\bak\\projDotNet.csproj",
+        "projectPath": "C:\\Users\\Net05\\Documents\\GitHub\\projDotNet\\projDotNet\\projDotNet.csproj",
         "packagesPath": "C:\\Users\\Net05\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Net05\\Documents\\GitHub\\projDotNet\\projDotNet\\bak\\bak\\obj\\",
+        "outputPath": "C:\\Users\\Net05\\Documents\\GitHub\\projDotNet\\projDotNet\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\Net05\\AppData\\Roaming\\NuGet\\NuGet.Config",
