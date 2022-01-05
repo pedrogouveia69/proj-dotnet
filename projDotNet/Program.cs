@@ -42,6 +42,7 @@ void setupParkingZone(DateTime[] parkingZone)
 void displayMenu(string title, string[] options)
 {
 	// O horário de funcionamento dos parquímetros é das 9h às 20h durante os dia úteis e das 9h às 14h nos sábados.
+	/*
 	var dateTimeNow = DateTime.Now;
 	if ((dateTimeNow.DayOfWeek == DayOfWeek.Sunday) || (dateTimeNow.DayOfWeek == DayOfWeek.Saturday && (dateTimeNow.Hour < 9 || dateTimeNow.Hour >= 14)) || (dateTimeNow.Hour < 9 || dateTimeNow.Hour >= 20))
 	//if (false)
@@ -57,16 +58,17 @@ void displayMenu(string title, string[] options)
 	}
 	else
 	{
-		Console.Clear();
-		Console.WriteLine("------- " + title + " -------");
-		for (int i = 0; i < options.Length; i++)
-		{
-			Console.WriteLine("   " + (i + 1) + " - " + options[i]);
-		}
-		string hyphens = "----------------";
-		for (int j = 0; j < title.Length; j++){ hyphens += "-"; }
-		Console.WriteLine(hyphens);
+	*/
+	Console.Clear();
+	Console.WriteLine("------- " + title + " -------");
+	for (int i = 0; i < options.Length; i++)
+	{
+		Console.WriteLine("   " + (i + 1) + " - " + options[i]);
 	}
+	string hyphens = "----------------";
+	for (int j = 0; j < title.Length; j++){ hyphens += "-"; }
+	Console.WriteLine(hyphens);
+	//}
 }
 
 int selectOption(int optionsLength) // MENU DE OPÇOES 
@@ -242,17 +244,19 @@ void insertCoins(int zoneNumber, DateTime[] parkingZone, int centsPerHour, int m
 
 	// Não pode ser cobrada nenhuma tarifa fora do horário de funcionamento do parquímetro.
 	// Jump to next open day
-	if (dateTimeNow.DayOfWeek == DayOfWeek.Saturday && exitTime.Hour >= 14)
+	// Zona 3 bug
+	if (exitTime.DayOfWeek == DayOfWeek.Saturday && exitTime.Hour >= 14)
     {
-		exitTime = dateTimeNow.AddSeconds(seconds).AddHours(43);
+		exitTime = dateTimeNow.AddSeconds(seconds).AddHours(19).AddDays(1);	
 	} 
-	else if (exitTime.Hour >= 20)
+	else if (exitTime.Hour >= 20 || exitTime.Hour < 9)
     {
 		exitTime = dateTimeNow.AddSeconds(seconds).AddHours(13);
 	}
 
 	displayMenu("Insira uma Moeda", coinsForDisplay);
 
+	
 	// Informação acerca da zona e do preço a pagar por hora.
 	Console.WriteLine("Custo por hora: " + (float)centsPerHour/100 + "€");
 	if (maxTimeSeconds != -1) 
@@ -273,10 +277,13 @@ void insertCoins(int zoneNumber, DateTime[] parkingZone, int centsPerHour, int m
 
 	if (exitTime > dateTimeNow.AddSeconds(maxTimeSeconds) && maxTimeSeconds != -1)
 	{
+		// Falta funcao troco
+		/*
 		Console.WriteLine("Excedeu o tempo máximo permitido.");
 		totalInsertedCents = 0;
 		pressKeyToContinue();
 		insertCoins(zoneNumber, parkingZone, centsPerHour, maxTimeSeconds);
+		*/
 	}
 
 	int option = selectOption(coinsForDisplay.Length);
@@ -307,6 +314,22 @@ void insertCoins(int zoneNumber, DateTime[] parkingZone, int centsPerHour, int m
 		totalInsertedCents = 0;
 		displayClientMenu();
 	}
+}
+
+DateTime checkExitTime(DateTime exitTime, int seconds) 
+{
+	DateTime dateTimeNow = DateTime.Now;
+
+	if (dateTimeNow.DayOfWeek == DayOfWeek.Saturday && exitTime.Hour >= 14)
+	{
+		return dateTimeNow.AddSeconds(seconds).AddHours(19).AddDays(1);
+	}
+	else if (exitTime.Hour >= 20 || exitTime.Hour < 9)
+	{
+		return dateTimeNow.AddSeconds(seconds).AddHours(13);
+	}
+
+	return exitTime;
 }
 
 bool parkIsFull(DateTime[] parkingZone) //PARK CHEIO
@@ -428,5 +451,14 @@ void pressKeyToContinue()
 {
 	Console.WriteLine("\nPressione qualquer tecla para continuar.");
 	Console.ReadKey(true);
+}
+
+int giveChange(int totalInsertedCents)
+{
+	int change = 0;
+
+	// ...
+
+	return change;
 }
 
