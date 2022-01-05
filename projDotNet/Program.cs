@@ -1,8 +1,22 @@
-﻿using System.Text;
+﻿using projDotNet;
+using System.Text;
 Console.OutputEncoding = Encoding.UTF8;
 
-// 3 zonas de estacionamento (cada zona deverá ter um número aleatório de lugares de estacionamento).
 var rand = new Random();
+
+/*
+// ----------------------------- Class Tests ---------------------------------
+Park parkingZoneOne = new Park(1, new DateTime[rand.Next(5, 10)], 115, 2700);
+Park parkingZoneTwo = new Park(2, new DateTime[rand.Next(5, 10)], 100, 7200);
+Park parkingZoneThree = new Park(3, new DateTime[rand.Next(5, 10)], 62, -1);
+
+parkingZoneOne.setupParkingZone();
+parkingZoneTwo.setupParkingZone();
+parkingZoneThree.setupParkingZone();
+// --------------------------------------------------------------------------
+*/ 
+
+// 3 zonas de estacionamento (cada zona deverá ter um número aleatório de lugares de estacionamento).
 var parkingOne = new DateTime[rand.Next(5, 10)];
 var parkingTwo = new DateTime[rand.Next(5, 10)];
 var parkingThree = new DateTime[rand.Next(5, 10)];
@@ -19,15 +33,15 @@ int parkingTwoMaxSeconds = 7200;
 int parkingThreeCentsPerHour = 62;
 int parkingThreeMaxSeconds = -1;
 
+// Fill parks with empty spots
+setupParkingZone(parkingOne);
+setupParkingZone(parkingTwo);
+setupParkingZone(parkingThree);
+
 int insertedCents = 0;
 int totalAccumulatedCents = 0;
 
 string adminPassword = "1234";
-
-// Fill with parks with empty spots
-setupParkingZone(parkingOne);
-setupParkingZone(parkingTwo);
-setupParkingZone(parkingThree);
 
 displayMainMenu();
 
@@ -42,9 +56,13 @@ void setupParkingZone(DateTime[] parkingZone)
 void displayMenu(string title, string[] options)
 {
 	// O horário de funcionamento dos parquímetros é das 9h às 20h durante os dia úteis e das 9h às 14h nos sábados.
-	var dateTimeNow = DateTime.Now;
-	if ((dateTimeNow.DayOfWeek == DayOfWeek.Sunday) || (dateTimeNow.DayOfWeek == DayOfWeek.Saturday &&
-		(dateTimeNow.Hour < 9 || dateTimeNow.Hour >= 14)) || (dateTimeNow.Hour < 9 || dateTimeNow.Hour >= 20))
+	var dateTimeNow = DateTime.Now; 
+	if
+	(
+		(dateTimeNow.DayOfWeek == DayOfWeek.Sunday) || 
+		(dateTimeNow.DayOfWeek == DayOfWeek.Saturday && (dateTimeNow.Hour < 9 || dateTimeNow.Hour >= 14)) ||
+		(dateTimeNow.Hour < 9 || dateTimeNow.Hour >= 20)
+	)
 	//if (false)
 	{
 		Console.WriteLine("////  O parque está encerrado.  ////");
@@ -78,7 +96,7 @@ int selectOption(int optionsLength) //https://codeasy.net/lesson/input_validatio
 	if (string.IsNullOrEmpty(optionStr))
 	{
 		Console.WriteLine("Não foi selecionada nenhuma opção!");
-		return selectOption(optionsLength);
+		selectOption(optionsLength);
 	}
 
 	int option;
@@ -86,7 +104,7 @@ int selectOption(int optionsLength) //https://codeasy.net/lesson/input_validatio
 	if (!tryParse || (option < 1 || option > optionsLength))
 	{
 		Console.WriteLine("Opção inválida!");
-		return selectOption(optionsLength);
+		selectOption(optionsLength);
 	}
 
 	return option;
@@ -130,6 +148,13 @@ void displayAdminMenu()
 			displayAllParkingSpots(1, parkingOne);
 			displayAllParkingSpots(2, parkingTwo);
 			displayAllParkingSpots(3, parkingThree);
+
+			/* Class
+			parkingZoneOne.displayAllParkingSpots();
+			parkingZoneTwo.displayAllParkingSpots();
+			parkingZoneThree.displayAllParkingSpots();
+			*/ 
+
 			pressKeyToContinue();
 			displayAdminMenu();
 			break;
@@ -199,6 +224,44 @@ void displayParkingZones(bool userIsParking)
 			case 4:
 				displayClientMenu();
 				break;
+
+			/* Class
+			case 1:
+				if (parkingZoneOne.parkIsFull())
+				{
+					Console.WriteLine("Este parque está cheio.");
+					displayParkingZones(true);
+
+				} 
+				else
+					insertCoins(option, parkingZoneOne.spots, parkingZoneOne.centsPerHour, parkingZoneOne.centsPerHour);
+				break;
+
+			case 2:
+				if (parkingZoneTwo.parkIsFull())
+				{
+					Console.WriteLine("Este parque está cheio.");
+					displayParkingZones(true);
+
+				}
+				else
+					insertCoins(option, parkingZoneTwo.spots, parkingZoneTwo.centsPerHour, parkingZoneTwo.centsPerHour);
+				break;
+
+			case 3:
+				if (parkingZoneThree.parkIsFull())
+				{
+					Console.WriteLine("Este parque está cheio.");
+					displayParkingZones(true);
+
+				}
+				else
+					insertCoins(option, parkingZoneThree.spots, parkingZoneThree.centsPerHour, parkingZoneThree.centsPerHour);
+				break;
+			case 4:
+				displayClientMenu();
+				break;
+			*/
 		}
 	}
 	else
@@ -217,6 +280,48 @@ void displayParkingZones(bool userIsParking)
 			case 4:
 				displayClientMenu();
 				break;
+
+			/* Class
+			case 1:
+				if (!parkingZoneOne.removeCar(getIdFromUser()))
+				{
+					pressKeyToContinue();
+					displayClientMenu();
+				} 
+				else
+                {
+					pressKeyToContinue();
+					displayClientMenu();
+				}
+				break;
+			case 2:
+				if (!parkingZoneTwo.removeCar(getIdFromUser()))
+				{
+					pressKeyToContinue();
+					displayClientMenu();
+				}
+				else
+				{
+					pressKeyToContinue();
+					displayClientMenu();
+				}
+				break;
+			case 3:
+				if (!parkingZoneThree.removeCar(getIdFromUser()))
+				{
+					pressKeyToContinue();
+					displayClientMenu();
+				}
+				else
+				{
+					pressKeyToContinue();
+					displayClientMenu();
+				}
+				break;
+			case 4:
+				displayClientMenu();
+				break;
+			*/
 		}
 	}
 };
@@ -227,19 +332,18 @@ void insertCoins(int zoneNumber, DateTime[] parkingZone, int centsPerHour, int m
 
 	var dateTimeNow = DateTime.Now; // vai buscar data atual
 	var duration = dateTimeNow.AddSeconds(seconds); // adiciona segundos conforme a(s) moeda(s) introduzida(s)
-
 	string[] coinsForDisplay = { "0.05€", "0.10€", "0.20€", "0.50€", "1.00€", "2.00€", "Confirmar", "Cancelar" };
 	int[] coinsForCalc = { 5, 10, 20, 50, 100, 200 };
 
 	// Não pode ser cobrada nenhuma tarifa fora do horário de funcionamento do parquímetro.
 	// Jump to next open day
-	if (dateTimeNow.DayOfWeek == DayOfWeek.Saturday && duration.Hour >= 14)
-    {
-		duration = dateTimeNow.AddSeconds(seconds).AddHours(43);
-	} 
-	else if (duration.Hour >= 20)
-    {
-		duration = dateTimeNow.AddSeconds(seconds).AddHours(13);
+	if (duration.DayOfWeek == DayOfWeek.Saturday && duration.Hour >= 14)
+	{
+		duration = duration.AddHours(19).AddDays(1);
+	}
+	else if (duration.Hour >= 20 || duration.Hour < 9)
+	{
+		duration = duration.AddHours(13);
 	}
 
 	displayMenu("Insira uma Moeda", coinsForDisplay);
@@ -293,14 +397,44 @@ void insertCoins(int zoneNumber, DateTime[] parkingZone, int centsPerHour, int m
 	else if (option == 7)
     {
 		totalAccumulatedCents += insertedCents;
+
 		parkCar(zoneNumber, parkingZone, duration);
-    }	
+
+		/* Class
+		switch (zoneNumber)
+        {
+			case 1: 
+				parkingZoneOne.parkCar(duration);
+				break;
+			case 2:
+				parkingZoneTwo.parkCar(duration);
+				break;
+			case 3:
+				parkingZoneThree.parkCar(duration);
+				break;
+		}
+		insertedCents = 0;
+		pressKeyToContinue();
+		displayMainMenu();
+		*/
+	}
 	else if (option == 8)
     {
 		insertedCents = 0;
 		displayClientMenu();
 	}
 }
+
+/*
+DateTime checkDuration(DateTime duration)
+{
+	if (duration.Hour >= 20 || duration.Hour < 9)
+	{
+		return duration.AddHours(13);
+	}
+	return duration;
+}
+*/
 
 bool parkIsFull(DateTime[] parkingZone)
 {
@@ -350,6 +484,7 @@ int getSeconds(int centsPerHour, int insertedCents)
 
 	return insertedCents * 3600 / centsPerHour;
 }
+
 
 void displayAllParkingSpots(int zoneNumber, DateTime[] parkingZone) 
 {
@@ -416,9 +551,10 @@ void removeCar(DateTime[] parkingZone, int id)
 	}
 }
 
+
 void pressKeyToContinue()
 {
-	Console.WriteLine("\nPressione qualquer tecla para continuar."); // "\n" = "enter"
+	Console.WriteLine("\nPressione qualquer tecla para continuar."); // "\n" = ENTER
 	Console.ReadKey(true);
 }
 
