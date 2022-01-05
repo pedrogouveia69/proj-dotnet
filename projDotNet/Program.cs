@@ -24,6 +24,8 @@ int totalAccumulatedCents = 0;
 
 string adminPassword = "1234";
 
+int hoursAdded = 0;
+
 // Fill with parks with empty spots
 setupParkingZone(parkingOne);
 setupParkingZone(parkingTwo);
@@ -246,19 +248,26 @@ void insertCoins(int zoneNumber, DateTime[] parkingZone, int centsPerHour, int m
 	var exitTime = dateTimeNow.AddSeconds(seconds);
 
 	string[] coinsForDisplay = { "0.05€", "0.10€", "0.20€", "0.50€", "1.00€", "2.00€", "Confirmar", "Cancelar" };
-	int[] coinsForCalc = { 5, 10, 20, 50, 100, 200 };
+	int[] coinsForCalc = { 5, 10, 20, 50, 100, 2400 };
 
 	// Não pode ser cobrada nenhuma tarifa fora do horário de funcionamento do parquímetro.
 	// Jump to next open day
 	// Zona 3 bug
+
+	exitTime = checkExitTime(exitTime, seconds);
+
+	/*
 	if (exitTime.DayOfWeek == DayOfWeek.Saturday && exitTime.Hour >= 14)
     {
-		exitTime = dateTimeNow.AddSeconds(seconds).AddHours(19).AddDays(1);	
+		exitTime = dateTimeNow.AddSeconds(seconds).AddHours(19).AddDays(1);
+		hoursAdded += 19 + 24;
 	} 
 	else if (exitTime.Hour >= 20 || exitTime.Hour < 9)
     {
 		exitTime = dateTimeNow.AddSeconds(seconds).AddHours(13);
+		hoursAdded += 13;
 	}
+	*/
 
 	displayMenu("Insira uma Moeda", coinsForDisplay);
 
@@ -331,11 +340,16 @@ DateTime checkExitTime(DateTime exitTime, int seconds)
 
 	if (dateTimeNow.DayOfWeek == DayOfWeek.Saturday && exitTime.Hour >= 14)
 	{
-		return dateTimeNow.AddSeconds(seconds).AddHours(19).AddDays(1);
+		return exitTime.AddHours(19).AddDays(1);
 	}
 	else if (exitTime.Hour >= 20 || exitTime.Hour < 9)
-	{
-		return dateTimeNow.AddSeconds(seconds).AddHours(13);
+	{		
+		if (exitTime.Hour + 13 >= 20 || exitTime.Hour < 9) {
+			int aux = exitTime.Hour - 20;
+			return exitTime.AddHours(13-aux);
+		} 
+		else
+			return exitTime.AddHours(13);	
 	}
 
 	return exitTime;

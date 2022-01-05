@@ -79,7 +79,6 @@ C:\Users\Net04\Documents\GitHub\projDotNet\projDotNet\bin\Debug\net6.0\projDotNe
 C:\Users\Net04\Documents\GitHub\projDotNet\projDotNet\bin\Debug\net6.0\projDotNet.dll
 C:\Users\Net04\Documents\GitHub\projDotNet\projDotNet\bin\Debug\net6.0\ref\projDotNet.dll
 C:\Users\Net04\Documents\GitHub\projDotNet\projDotNet\bin\Debug\net6.0\projDotNet.pdb
-C:\Users\Net04\Documents\GitHub\projDotNet\projDotNet\obj\Debug\net6.0\projDotNet.csproj.AssemblyReference.cache
 C:\Users\Net04\Documents\GitHub\projDotNet\projDotNet\obj\Debug\net6.0\projDotNet.GeneratedMSBuildEditorConfig.editorconfig
 C:\Users\Net04\Documents\GitHub\projDotNet\projDotNet\obj\Debug\net6.0\projDotNet.AssemblyInfoInputs.cache
 C:\Users\Net04\Documents\GitHub\projDotNet\projDotNet\obj\Debug\net6.0\projDotNet.AssemblyInfo.cs
