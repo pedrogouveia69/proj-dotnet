@@ -103,7 +103,17 @@ void displayMainMenu() // MENU PRINCIPAL
 			break;
 		case 2:
 			Console.Write("Insira a palavra-passe: ");
-			string password = Console.ReadLine();
+			// Hide user password input
+			// https://stackoverflow.com/questions/23433980/c-sharp-console-hide-the-input-from-console-window-while-typing
+			string password = null;
+			while (true)
+			{
+				var key = System.Console.ReadKey(true);
+				if (key.Key == ConsoleKey.Enter)
+					break;
+				password += key.KeyChar;
+			}
+			// --------------------------
 			if (password != adminPassword || string.IsNullOrEmpty(password))
 			{
 				Console.WriteLine("Password Incorreta");

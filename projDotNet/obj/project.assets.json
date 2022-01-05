@@ -8,19 +8,19 @@
     "net6.0": []
   },
   "packageFolders": {
-    "C:\\Users\\Net05\\.nuget\\packages\\": {}
+    "C:\\Users\\Net04\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Net05\\Documents\\GitHub\\projDotNet\\projDotNet\\projDotNet.csproj",
+      "projectUniqueName": "C:\\Users\\Net04\\Documents\\GitHub\\projDotNet\\projDotNet\\projDotNet.csproj",
       "projectName": "projDotNet",
-      "projectPath": "C:\\Users\\Net05\\Documents\\GitHub\\projDotNet\\projDotNet\\projDotNet.csproj",
-      "packagesPath": "C:\\Users\\Net05\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Net05\\Documents\\GitHub\\projDotNet\\projDotNet\\obj\\",
+      "projectPath": "C:\\Users\\Net04\\Documents\\GitHub\\projDotNet\\projDotNet\\projDotNet.csproj",
+      "packagesPath": "C:\\Users\\Net04\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\Net04\\Documents\\GitHub\\projDotNet\\projDotNet\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\Net05\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\Net04\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
