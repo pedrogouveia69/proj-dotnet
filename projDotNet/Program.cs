@@ -242,8 +242,8 @@ void displayParkingZones(bool userIsParking)
 // MENU DE CALCULO DE MOEDAS
 void insertCoins(int zoneNumber, DateTime[] parkingZone, int centsPerHour, int maxTimeSeconds) 
 {
-	string[] coinsForDisplay = { "0.05€", "0.10€", "0.20€", "0.50€", "1.00€", "2.00€", "Confirmar", "Cancelar" };
-	int[] coinsForCalc = { 5, 10, 20, 50, 100, 2400 };
+	string[] coinsForDisplay = { "0.01€", "0.02€", "0.05€", "0.10€", "0.20€", "0.50€", "1.00€", "2.00€", "Confirmar", "Cancelar" };
+	int[] coinsForCalc = { 1, 2, 5, 10, 20, 50, 100, 200 };
 
 	int seconds = getSeconds(centsPerHour, totalInsertedCents);
 	var dateTimeNow = DateTime.Now;
@@ -251,7 +251,6 @@ void insertCoins(int zoneNumber, DateTime[] parkingZone, int centsPerHour, int m
 
 	// Não pode ser cobrada nenhuma tarifa fora do horário de funcionamento do parquímetro.
 	// Jump to next open day
-	// Zona 3 bug
 	exitTime = checkExitTime(exitTime, seconds);
 
 	displayMenu("Insira uma Moeda", coinsForDisplay);
@@ -274,33 +273,34 @@ void insertCoins(int zoneNumber, DateTime[] parkingZone, int centsPerHour, int m
 		Console.WriteLine("Insira outra moeda ou escolha '7' para Confirmar.");
 	}
 
-	if (exitTime > dateTimeNow.AddSeconds(maxTimeSeconds) && maxTimeSeconds != -1)
-	{
-		// Falta funcao troco
-		/*
-		Console.WriteLine("Excedeu o tempo máximo permitido.");
-		totalInsertedCents = 0;
-		pressKeyToContinue();
-		insertCoins(zoneNumber, parkingZone, centsPerHour, maxTimeSeconds);
-		*/
-	}
-
 	int option = selectOption(coinsForDisplay.Length);
 
-	if (option == 7 && totalInsertedCents == 0)
+	if (option == 9 && totalInsertedCents == 0)
 	{
 		Console.WriteLine("Não é possível Confirmar sem introduzir dinheiro.");
 		pressKeyToContinue();
 		insertCoins(zoneNumber, parkingZone, centsPerHour, maxTimeSeconds);
 	}
 	// CONFIRMAR
-	else if (option == 7)
+	else if (option == 9)
 	{
-		totalAccumulatedCents += totalInsertedCents;
+		// Falta funcao troco
+		int maxCents = getMaxCents(centsPerHour, maxTimeSeconds);
+		if (totalInsertedCents > maxCents)
+		{
+			int change = totalInsertedCents - maxCents;
+
+			var changeDictionary = new Dictionary<int, int>();
+			for(int i = coinsForCalc.Length-1; i >= 0; i--)
+            {
+				changeDictionary.Add(coinsForCalc[i], 0);
+            }
+		}
+		totalAccumulatedCents += totalInsertedCents; //needs to be changed
 		parkCar(zoneNumber, parkingZone, exitTime);
 	}
 	// CANCELAR
-	else if (option == 8)
+	else if (option == 10)
 	{
 		totalInsertedCents = 0;
 		displayClientMenu();
@@ -376,15 +376,22 @@ int getIdFromUser()
 	return id;
 }
 
-// Regra de 3 simples para obter segundos p/cêntimo
+// Regra de 3 simples para obter o total de segundos conforme os cêntimos introduzidos
 int getSeconds(int centsPerHour, int insertedCents)
 {
 	//  centsPerHour ------- 3600 seconds
 	// insertedCents -------  𝑥 seconds
 
-	// This function returns 𝑥
-
 	return insertedCents * 3600 / centsPerHour;
+}
+
+// Regra de 3 simples para obter o custo do tempo máximo em cêntimos
+int getMaxCents(int centsPerHour, int maxTimeSeconds)
+{
+	//  centsPerHour ------- 3600 seconds
+	//       𝑥       ------- maxTimeSeconds
+
+	return centsPerHour * maxTimeSeconds / 3600;
 }
 
 // MENU DE MOSTRAR OS LUGARES
@@ -459,14 +466,5 @@ void pressKeyToContinue()
 {
 	Console.WriteLine("\nPressione qualquer tecla para continuar.");
 	Console.ReadKey(true);
-}
-
-int giveChange(int totalInsertedCents)
-{
-	int change = 0;
-
-	// ...
-
-	return change;
 }
 
