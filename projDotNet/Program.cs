@@ -242,36 +242,20 @@ void displayParkingZones(bool userIsParking)
 // MENU DE CALCULO DE MOEDAS
 void insertCoins(int zoneNumber, DateTime[] parkingZone, int centsPerHour, int maxTimeSeconds) 
 {
-	int seconds = getSeconds(centsPerHour, totalInsertedCents);
-
-	var dateTimeNow = DateTime.Now;
-	var exitTime = dateTimeNow.AddSeconds(seconds);
-
 	string[] coinsForDisplay = { "0.05€", "0.10€", "0.20€", "0.50€", "1.00€", "2.00€", "Confirmar", "Cancelar" };
 	int[] coinsForCalc = { 5, 10, 20, 50, 100, 2400 };
+
+	int seconds = getSeconds(centsPerHour, totalInsertedCents);
+	var dateTimeNow = DateTime.Now;
+	var exitTime = dateTimeNow.AddSeconds(seconds);
 
 	// Não pode ser cobrada nenhuma tarifa fora do horário de funcionamento do parquímetro.
 	// Jump to next open day
 	// Zona 3 bug
-
 	exitTime = checkExitTime(exitTime, seconds);
-
-	/*
-	if (exitTime.DayOfWeek == DayOfWeek.Saturday && exitTime.Hour >= 14)
-    {
-		exitTime = dateTimeNow.AddSeconds(seconds).AddHours(19).AddDays(1);
-		hoursAdded += 19 + 24;
-	} 
-	else if (exitTime.Hour >= 20 || exitTime.Hour < 9)
-    {
-		exitTime = dateTimeNow.AddSeconds(seconds).AddHours(13);
-		hoursAdded += 13;
-	}
-	*/
 
 	displayMenu("Insira uma Moeda", coinsForDisplay);
 
-	
 	// Informação acerca da zona e do preço a pagar por hora.
 	Console.WriteLine("Custo por hora: " + (float)centsPerHour/100 + "€");
 	if (maxTimeSeconds != -1) 
@@ -303,35 +287,31 @@ void insertCoins(int zoneNumber, DateTime[] parkingZone, int centsPerHour, int m
 
 	int option = selectOption(coinsForDisplay.Length);
 
-	// OPCOES DE CONFIRMAR E CANCELAR
-	while (option != 7 && option != 8) 
-	{
-		for (int i = 0; i < coinsForCalc.Length; i++)
-		{
-			if (option - 1 == i)
-				totalInsertedCents += coinsForCalc[i];
-		}
-		insertCoins(zoneNumber, parkingZone, centsPerHour, maxTimeSeconds);
-	}
-
 	if (option == 7 && totalInsertedCents == 0)
-    {
+	{
 		Console.WriteLine("Não é possível Confirmar sem introduzir dinheiro.");
 		pressKeyToContinue();
 		insertCoins(zoneNumber, parkingZone, centsPerHour, maxTimeSeconds);
 	}
 	// CONFIRMAR
-	else if (option == 7) 
-    {
+	else if (option == 7)
+	{
 		totalAccumulatedCents += totalInsertedCents;
 		parkCar(zoneNumber, parkingZone, exitTime);
-    }
+	}
 	// CANCELAR
-	else if (option == 8) 
-    {
+	else if (option == 8)
+	{
 		totalInsertedCents = 0;
 		displayClientMenu();
 	}
+
+	for (int i = 0; i < coinsForCalc.Length; i++)
+	{
+		if (option - 1 == i)
+			totalInsertedCents += coinsForCalc[i];
+	}
+	insertCoins(zoneNumber, parkingZone, centsPerHour, maxTimeSeconds);
 }
 
 DateTime checkExitTime(DateTime exitTime, int seconds) 
