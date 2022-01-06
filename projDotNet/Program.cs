@@ -197,7 +197,8 @@ void displayParkingZones(bool userIsParking)
 void displayParkingInfo(int zoneNumber, DateTime[] parkingZone, int centsPerHour, int maxTimeSeconds) 
 {
 	int seconds = getSeconds(centsPerHour, insertedCents);
-	var exitTime = calculateExitTime(seconds);
+	var exitTime = DateTime.Now.AddSeconds(seconds);
+	exitTime = adjustExitTime(exitTime);
 	string[] coinOptions = { "0.05€", "0.10€", "0.20€", "0.50€", "1.00€", "2.00€", "Confirmar", "Cancelar" };
 	displayMenu("Insira uma Moeda", coinOptions);
 
@@ -215,7 +216,7 @@ void displayParkingInfo(int zoneNumber, DateTime[] parkingZone, int centsPerHour
 		if (seconds > maxTimeSeconds && maxTimeSeconds != -1)
 		{
 			Console.WriteLine("\nExcedeu o tempo máximo permitido.");
-			exitTime = calculateExitTime(maxTimeSeconds);
+			exitTime = DateTime.Now.AddSeconds(maxTimeSeconds);
 			exitTime = adjustExitTime(exitTime);
 			Console.WriteLine("O seu estacionamento será válido até: " + exitTime);
 			Console.WriteLine("Irá receber o troco juntamente com o Ticket.");
@@ -298,53 +299,81 @@ int selectOption(int optionsLength)
 	}
 	return option;
 }
-DateTime calculateExitTime(int seconds)
-{
-	var exitTime = DateTime.Now.AddSeconds(seconds);
-
-	while
-	(
-		(exitTime.DayOfWeek == DayOfWeek.Sunday) ||
-		(exitTime.DayOfWeek == DayOfWeek.Saturday && (exitTime.Hour < 9 || exitTime.Hour >= 14)) ||
-		(exitTime.Hour < 9 || exitTime.Hour >= 20)
-	)
-	{
-		exitTime = adjustExitTime(exitTime);
-	}
-
-	return exitTime;
-}
 
 DateTime adjustExitTime(DateTime exitTime)
 {
-	if (exitTime.DayOfWeek == DayOfWeek.Sunday)
+	if (DateTime.Now.DayOfWeek == DayOfWeek.Sunday)
+		// add 1 day to jump to monday
+		// remove excess hours/minutes/seconds after 9:00
+		return exitTime.AddDays(1).AddHours(9 - DateTime.Now.Hour).AddMinutes(-DateTime.Now.Minute).AddSeconds(-DateTime.Now.Second);
 
-		return exitTime.AddHours(24);
-
-	if (exitTime.DayOfWeek == DayOfWeek.Saturday && exitTime.Hour >= 14) 
-	
-		return exitTime.AddHours(10);
-
-	if (exitTime.Hour < 9)
-  
-		return exitTime.AddHours(9);
-
-	if (exitTime.Hour >= 20)
-
-		return exitTime.AddHours(4);
-	
+	if (exitTime.DayOfWeek == DayOfWeek.Saturday && exitTime.Hour >= 14)
+	{
+		if (DateTime.Now.DayOfWeek == DayOfWeek.Saturday && DateTime.Now.Hour >= 14)
+		{
+			// add 43 hours to jump to monday
+			// remove excess hours/minutes/seconds after 14:00
+			return exitTime.AddHours(43).AddHours(14 - DateTime.Now.Hour).AddMinutes(-DateTime.Now.Minute).AddSeconds(-DateTime.Now.Second);
+		}
+		return exitTime.AddHours(43);
+	}
+	if (DateTime.Now.Hour < 9)
+	{
+		// add 9 hours to jump to 9:00
+		// remove excess hours/minutes/seconds after 0:00
+		return exitTime.AddHours(9).AddHours(-DateTime.Now.Hour).AddMinutes(-DateTime.Now.Minute).AddSeconds(-DateTime.Now.Second);
+	}
+	if (exitTime.Hour >= 20 || exitTime.Hour < 9)
+	{
+		if (DateTime.Now.Hour >= 20)
+		{
+			// add 13 hours to jump to next day
+			// remove excess hours/minutes/seconds after 20:00
+			return exitTime.AddHours(13).AddHours(20 - DateTime.Now.Hour).AddMinutes(-DateTime.Now.Minute).AddSeconds(-DateTime.Now.Second);
+		}
+		return exitTime.AddHours(13);
+	}
 	return exitTime;
 }
+
+/*
+DateTime f(DateTime exitTime)
+{
+	if (exitTime.DayOfWeek == DayOfWeek.Sunday)
+    {
+		return exitTime.AddDays(1);
+    }
+	if (exitTime.DayOfWeek == DayOfWeek.Saturday && exitTime.Hour >= 14)
+    {
+		return exitTime.AddHours(10);
+    }
+	if (exitTime.Hour < 9)
+    {
+		return exitTime.AddHours(9 - DateTime.Now.Hour);
+    }
+	if (exitTime.Hour >= 20)
+    {
+		return exitTime.AddHours(4);
+    }
+	return exitTime;
+}
+*/
+/*
+while
+(
+	(exitTime.DayOfWeek == DayOfWeek.Sunday) ||
+	(exitTime.DayOfWeek == DayOfWeek.Saturday && (exitTime.Hour < 9 || exitTime.Hour >= 14)) ||
+	(exitTime.Hour < 9 || exitTime.Hour >= 20)
+)
+{
+	exitTime = f(exitTime);
+}
+*/
 
 /*
 DateTime adjustExitTime(DateTime exitTime)
 {
 	DateTime DateTime.Now = DateTime.Now;
-
-	if (DateTime.Now.DayOfWeek == DayOfWeek.Saturday && exitTime.Hour >= 14)
-	{
-		return exitTime.AddHours(43);
-	}
 	if (exitTime.Hour >= 20 || exitTime.Hour < 9)
 	{
 		if (exitTime.Hour + 13 >= 20 || exitTime.Hour < 9)
@@ -352,8 +381,7 @@ DateTime adjustExitTime(DateTime exitTime)
 			int aux = exitTime.Hour - 20;
 			return exitTime.AddHours(13-aux);
 		}
-		else
-			return exitTime.AddHours(13);
+		return exitTime.AddHours(13);
 	}
 	return exitTime;
 }
