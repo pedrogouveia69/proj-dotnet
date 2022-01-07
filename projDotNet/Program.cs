@@ -198,16 +198,16 @@ void displayParkingInfo(int zoneNumber, DateTime[] parkingZone, int centsPerHour
 	int seconds = getSeconds(centsPerHour, totalInsertedCents);
 	var dateTimeNow = DateTime.Now;
 	var exitTime = dateTimeNow.AddSeconds(seconds);
-	exitTime = checkExitTime(exitTime, seconds);
+	exitTime = checkExitTime(exitTime);
 
 	displayMenu("Insira uma Moeda", coinsForDisplay);
-
-	showOpenHours();
 
 	Console.WriteLine("Custo por hora: " + (float)centsPerHour/100 + "€");
 	if (maxTimeSeconds != -1) 
 		Console.WriteLine("Tempo máximo permitido: " + maxTimeSeconds/60 + " minutos");
-	
+
+	showOpenHours();
+
 	if (totalInsertedCents != 0) {
 		float totalEuros = (float)totalInsertedCents/100;
 		Console.WriteLine("\nTotal: " + totalEuros.ToString("n2") + "€");
@@ -216,7 +216,7 @@ void displayParkingInfo(int zoneNumber, DateTime[] parkingZone, int centsPerHour
 		{
 			Console.WriteLine("\nExcedeu o tempo máximo permitido.");
 			exitTime = dateTimeNow.AddSeconds(maxTimeSeconds);
-			exitTime = checkExitTime(exitTime, seconds);
+			exitTime = checkExitTime(exitTime);
 			Console.WriteLine("O seu estacionamento será válido até: " + exitTime);
 			Console.WriteLine("Irá receber o troco juntamente com o Ticket.");
 			pressKeyToContinue();
@@ -300,7 +300,39 @@ int selectOption(int optionsLength)
 	return option;
 }
 
-DateTime checkExitTime(DateTime exitTime, int seconds)
+DateTime checkExitTime(DateTime exitTime)
+{
+	DateTime dateTimeNow = DateTime.Now;
+
+	if (exitTime.DayOfWeek == DayOfWeek.Sunday)
+    {
+		// add 24 hours to jump to monday
+		// remove excess hours/minutes/seconds starting from 9:00
+		exitTime.AddHours(24);
+		exitTime.AddHours(9 - dateTimeNow.Hour).AddMinutes(-dateTimeNow.Minute).AddSeconds(-dateTimeNow.Second);
+		return exitTime;
+    }
+	if (exitTime.DayOfWeek == DayOfWeek.Saturday && exitTime.Hour >= 14)
+	{
+		// add 43 hours to jump to monday
+		// remove excess hours/minutes/seconds starting from 14:00
+		exitTime.AddHours(43);
+		exitTime.AddHours(14 - dateTimeNow.Hour).AddMinutes(-dateTimeNow.Minute).AddSeconds(-dateTimeNow.Second);
+		return exitTime;
+	}
+	if (exitTime.Hour >= 20 || exitTime.Hour < 9)
+	{
+		// add 13 hours to jump to next day
+		// remove excess hours/minutes/seconds starting from 20:00
+		exitTime.AddHours(13);
+		exitTime.AddHours(20 - dateTimeNow.Hour).AddMinutes(-dateTimeNow.Minute).AddSeconds(-dateTimeNow.Second);
+		return exitTime;
+	}
+	return exitTime;
+}
+
+/*
+DateTime checkExitTime(DateTime exitTime)
 {
 	DateTime dateTimeNow = DateTime.Now;
 
@@ -308,7 +340,7 @@ DateTime checkExitTime(DateTime exitTime, int seconds)
 	{
 		return exitTime.AddHours(43);
 	}
-	else if (exitTime.Hour >= 20 || exitTime.Hour < 9)
+	if (exitTime.Hour >= 20 || exitTime.Hour < 9)
 	{
 		if (exitTime.Hour + 13 >= 20 || exitTime.Hour < 9)
 		{
@@ -320,6 +352,7 @@ DateTime checkExitTime(DateTime exitTime, int seconds)
 	}
 	return exitTime;
 }
+*/
 
 void showOpenHours()
 {
@@ -333,6 +366,7 @@ void showOpenHours()
 		Console.WriteLine("\nHorário de Funcionamento dos Parquímetros:");
 		Console.WriteLine(" - Dias Úteis:  9:00 - 20:00");
 		Console.WriteLine(" - Sábados:     9:00 - 14:00\n");
+		Console.WriteLine("As suas moedas serão contabilizadas para o próximo período aberto.");
 	}
 }
 
