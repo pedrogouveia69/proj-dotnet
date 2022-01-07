@@ -27,72 +27,24 @@ int totalAccumulatedCents = 0;
 string adminPassword = "1234";
 
 // Fill with parks with empty spots
-setupParkingZone(parkingOne);
-setupParkingZone(parkingTwo);
-setupParkingZone(parkingThree);
+fillWithEmptySpots(parkingOne);
+fillWithEmptySpots(parkingTwo);
+fillWithEmptySpots(parkingThree);
 
 displayMainMenu();
-
-void setupParkingZone(DateTime[] parkingZone)
-{
-	for (int i = 0; i < parkingZone.Length; i++)
-	{
-		parkingZone[i] = new DateTime();
-	}
-}
-
-void showOpenHours()
-{
-	// O horário de funcionamento dos parquímetros é das 9h às 20h durante os dia úteis e das 9h às 14h nos sábados.
-	var dateTimeNow = DateTime.Now;
-	if (
-		(dateTimeNow.DayOfWeek == DayOfWeek.Sunday) ||
-		(dateTimeNow.DayOfWeek == DayOfWeek.Saturday && (dateTimeNow.Hour < 9 || dateTimeNow.Hour >= 14)) ||
-		(dateTimeNow.Hour < 9 || dateTimeNow.Hour >= 20)
-	   )
-	{
-		Console.WriteLine("\nHorário de Funcionamento dos Parquímetros:");
-		Console.WriteLine(" - Dias Úteis:  9:00 - 20:00");
-		Console.WriteLine(" - Sábados:     9:00 - 14:00\n");
-	}
-}
 
 void displayMenu(string title, string[] options)
 {
 	Console.Clear();
 	Console.WriteLine("------- " + title + " -------");
 	for (int i = 0; i < options.Length; i++)
-	{
 		Console.WriteLine("   " + (i + 1) + " - " + options[i]);
-	}
 	string hyphens = "----------------";
-	for (int j = 0; j < title.Length; j++){ hyphens += "-"; }
+	for (int j = 0; j < title.Length; j++)
+		hyphens += "-";
 	Console.WriteLine(hyphens);
 }
 
-int selectOption(int optionsLength)  
-{
-	Console.Write("Escolha uma opção: ");
-	string optionStr = Console.ReadLine();
-
-	if (string.IsNullOrEmpty(optionStr))
-	{
-		Console.WriteLine("Não foi selecionada nenhuma opção!");
-		return selectOption(optionsLength);
-	}
-
-	int option;
-	bool tryParse = int.TryParse(optionStr, out option);
-	if (!tryParse || (option < 1 || option > optionsLength))
-	{
-		Console.WriteLine("Opção inválida!");
-		return selectOption(optionsLength);
-	}
-
-	return option;
-}
-
-// MENU PRINCIPAL
 void displayMainMenu() 
 {
 	string[] mainMenuOptions = { "Menu Cliente" , "Menu Admin" };
@@ -105,35 +57,24 @@ void displayMainMenu()
 			break;
 		case 2:
 			Console.Write("Insira a palavra-passe: ");
-			// Hide user password input
-			// https://stackoverflow.com/questions/23433980/c-sharp-console-hide-the-input-from-console-window-while-typing
-			string password = null;
-			while (true)
-			{
-				var key = System.Console.ReadKey(true);
-				if (key.Key == ConsoleKey.Enter)
-					break;
-				password += key.KeyChar;
-			}
-			// --------------------------
+			string password = Console.ReadLine();
 			if (password != adminPassword || string.IsNullOrEmpty(password))
 			{
 				Console.WriteLine("Password Incorreta");
 				pressKeyToContinue();
 				displayMainMenu();
 			}
-			else
-			{
-				displayAdminMenu();
-			}
+			displayAdminMenu();
 			break;
 	}
 }
 
-// MENU DE ADMNISTRADOR
 void displayAdminMenu() 
 {
-	string[] adminMenuOptions = { "Ver Zonas", "Ver Total de Dinheiro Acumulado", "Ver Histórico de Tickets", "Reset Total de Dinheiro Acumulado ", "Reset Histórico de Tickets", "Voltar" };
+	string[] adminMenuOptions = 
+	{
+		"Ver Zonas", "Ver Total de Dinheiro Acumulado", "Ver Histórico de Tickets", "Reset Total de Dinheiro Acumulado ", "Reset Histórico de Tickets", "Voltar" 
+	};
 	displayMenu("Menu Admin", adminMenuOptions);
 	int option = selectOption(adminMenuOptions.Length);
 	switch (option)
@@ -146,7 +87,6 @@ void displayAdminMenu()
 			displayAdminMenu();
 			break;
 		case 2:
-			// Visualizar o total(€) que foi obtido durante o dia.
 			float totalAccumulatedEuros = (float)totalAccumulatedCents/100;
 			Console.WriteLine("\nTotal Acumulado: " + totalAccumulatedEuros.ToString("n2") + "€");
 			pressKeyToContinue();
@@ -183,7 +123,6 @@ void displayAdminMenu()
 	}
 };
 
-// OPÇOES DE ESTACIONAR E REMOVER CARRO
 void displayClientMenu() 
 {
 	string[] clientMenuOptions = { "Estacionar", "Remover Carro", "Voltar" };
@@ -204,7 +143,6 @@ void displayClientMenu()
 	}
 }
 
-// OPÇOES DE MOSTRAR ZONAS
 void displayParkingZones(bool userIsParking) 
 {
 	string[] zoneOptions = { "Zona 1", "Zona 2", "Zona 3", "Voltar" };
@@ -213,51 +151,44 @@ void displayParkingZones(bool userIsParking)
 
 	if (userIsParking)
 	{
-		switch (option) // INTRODUZIR CARRO
+		switch (option) // ESTACIONAR CARRO
 		{
 			case 1:
 				if (parkIsFull(parkingOne))
 					displayParkingZones(true);
-				else
-					displayParkingInfo(option, parkingOne, parkingOneCentsPerHour, parkingOneMaxSeconds);
+				displayParkingInfo(option, parkingOne, parkingOneCentsPerHour, parkingOneMaxSeconds);
 				break;
-
 			case 2:
 				if (parkIsFull(parkingTwo))
 					displayParkingZones(true);
-				else
-					displayParkingInfo(option, parkingTwo, parkingTwoCentsPerHour, parkingTwoMaxSeconds);
+				displayParkingInfo(option, parkingTwo, parkingTwoCentsPerHour, parkingTwoMaxSeconds);
 				break;
 
 			case 3:
 				if (parkIsFull(parkingThree))
 					displayParkingZones(true);
-				else
-					displayParkingInfo(option, parkingThree, parkingThreeCentsPerHour, parkingThreeMaxSeconds);
+				displayParkingInfo(option, parkingThree, parkingThreeCentsPerHour, parkingThreeMaxSeconds);
 				break;
 			case 4:
 				displayClientMenu();
 				break;
 		}
 	}
-	else
+	switch (option) // REMOVER CARRO
 	{
-		switch (option) // REMOVER CARRO
-		{
-			case 1:				
-				removeCar(parkingOne, getIdFromUser());
-				break;
-			case 2:
-				removeCar(parkingTwo, getIdFromUser());
-				break;
-			case 3:
-				removeCar(parkingThree, getIdFromUser());
-				break;
-			case 4:
-				displayClientMenu();
-				break;
-		}
-	}
+		case 1:				
+			removeCar(parkingOne, getIdFromUser());
+			break;
+		case 2:
+			removeCar(parkingTwo, getIdFromUser());
+			break;
+		case 3:
+			removeCar(parkingThree, getIdFromUser());
+			break;
+		case 4:
+			displayClientMenu();
+			break;
+	}	
 };
 
 void displayParkingInfo(int zoneNumber, DateTime[] parkingZone, int centsPerHour, int maxTimeSeconds) 
@@ -275,9 +206,7 @@ void displayParkingInfo(int zoneNumber, DateTime[] parkingZone, int centsPerHour
 
 	Console.WriteLine("Custo por hora: " + (float)centsPerHour/100 + "€");
 	if (maxTimeSeconds != -1) 
-	{
 		Console.WriteLine("Tempo máximo permitido: " + maxTimeSeconds/60 + " minutos");
-	}
 	
 	if (totalInsertedCents != 0) {
 		float totalEuros = (float)totalInsertedCents/100;
@@ -316,27 +245,62 @@ void manageOptions(int coinsForDisplayLength, int zoneNumber, DateTime[] parking
 		pressKeyToContinue();
 		displayParkingInfo(zoneNumber, parkingZone, centsPerHour, maxTimeSeconds);
 	}
-	else if (option == 7)
+	if (option == 7)
 	{
 		totalAccumulatedCents += totalInsertedCents;
 		parkCar(zoneNumber, parkingZone, exitTime, 0);
 	}
-	else if (option == 8)
+	if (option == 8)
 	{
 		totalInsertedCents = 0;
 		displayClientMenu();
 	}
 
 	for (int i = 0; i < coinsForCalc.Length; i++)
-	{
 		if (option - 1 == i)
 			totalInsertedCents += coinsForCalc[i];
-	}
 
 	displayParkingInfo(zoneNumber, parkingZone, centsPerHour, maxTimeSeconds);
 }
 
-DateTime checkExitTime(DateTime exitTime, int seconds) 
+void displayAllParkingSpots(int zoneNumber, DateTime[] parkingZone)
+{
+	var dateTimeNow = DateTime.Now;
+
+	Console.WriteLine();
+	Console.WriteLine("Zona " + zoneNumber + ":");
+	for (int i = 0; i < parkingZone.Length; i++)
+	{
+		if (parkingZone[i] == new DateTime())
+			Console.WriteLine("[ Lugar " + (i + 1) + " - Disponível ]");
+		else if (dateTimeNow > parkingZone[i])
+			Console.WriteLine("[ Lugar " + (i + 1) +  " - Carro excede o tempo pago! -> " + parkingZone[i] + " ]");
+		else
+			Console.WriteLine("[ Lugar " + (i + 1) + " - Ocupado até " + parkingZone[i] + " ]");
+	}
+}
+
+int selectOption(int optionsLength)
+{
+	Console.Write("Escolha uma opção: ");
+	string optionStr = Console.ReadLine();
+	if (string.IsNullOrEmpty(optionStr))
+	{
+		Console.WriteLine("Não foi selecionada nenhuma opção!");
+		return selectOption(optionsLength);
+	}
+
+	int option;
+	bool tryParse = int.TryParse(optionStr, out option);
+	if (!tryParse || (option < 1 || option > optionsLength))
+	{
+		Console.WriteLine("Opção inválida!");
+		return selectOption(optionsLength);
+	}
+	return option;
+}
+
+DateTime checkExitTime(DateTime exitTime, int seconds)
 {
 	DateTime dateTimeNow = DateTime.Now;
 
@@ -345,27 +309,45 @@ DateTime checkExitTime(DateTime exitTime, int seconds)
 		return exitTime.AddHours(43);
 	}
 	else if (exitTime.Hour >= 20 || exitTime.Hour < 9)
-	{		
-		if (exitTime.Hour + 13 >= 20 || exitTime.Hour < 9) {
+	{
+		if (exitTime.Hour + 13 >= 20 || exitTime.Hour < 9)
+		{
 			int aux = exitTime.Hour - 20;
 			return exitTime.AddHours(13-aux);
-		} 
+		}
 		else
-			return exitTime.AddHours(13);	
+			return exitTime.AddHours(13);
 	}
-
 	return exitTime;
 }
 
-//PARK CHEIO
+void showOpenHours()
+{
+	var dateTimeNow = DateTime.Now;
+	if (
+		(dateTimeNow.DayOfWeek == DayOfWeek.Sunday) ||
+		(dateTimeNow.DayOfWeek == DayOfWeek.Saturday && (dateTimeNow.Hour < 9 || dateTimeNow.Hour >= 14)) ||
+		(dateTimeNow.Hour < 9 || dateTimeNow.Hour >= 20)
+	   )
+	{
+		Console.WriteLine("\nHorário de Funcionamento dos Parquímetros:");
+		Console.WriteLine(" - Dias Úteis:  9:00 - 20:00");
+		Console.WriteLine(" - Sábados:     9:00 - 14:00\n");
+	}
+}
+
+void fillWithEmptySpots(DateTime[] parkingZone)
+{
+	for (int i = 0; i < parkingZone.Length; i++)
+		parkingZone[i] = new DateTime();
+}
+
 bool parkIsFull(DateTime[] parkingZone) 
 {
 	int occupiedSpots = 0;
 	for (int i = 0; i < parkingZone.Length; i++)
-	{
 		if (parkingZone[i] != new DateTime())
 			occupiedSpots++;
-	}
 
 	if (occupiedSpots >= parkingZone.Length)
 	{
@@ -376,8 +358,81 @@ bool parkIsFull(DateTime[] parkingZone)
 	return false;
 }
 
+void parkCar(int zoneNumber, DateTime[] parkingZone, DateTime exitTime, int change)  
+{
+	for (int i = 0; i < parkingZone.Length; i++)
+	{
+		if (parkingZone[i] == new DateTime())
+        {
+			parkingZone[i] = exitTime;
+			string ticket = "";
+			ticket += "--------------------- Ticket ---------------------";
+			ticket += "\n O seu carro está estacionado na ZONA " + zoneNumber;
+			ticket += "\n O seu ID é " + (i + 1);
+			ticket += "\n O estacionamento é válido até " + exitTime;
+			ticket += "\n--------------------------------------------------";
+			ticketHistory.Add(ticket);
+			Console.Clear();
+			Console.Write(ticket);
+			if (change > 0)
+				giveChange(change);
+			totalInsertedCents = 0;
+			pressKeyToContinue();
+			displayMainMenu();
+        }
+	}
+}
+
+void removeCar(DateTime[] parkingZone, int id) 
+{
+	id = id - 1;
+	if ((id > (parkingZone.Length -1) || id < 0))
+	{
+		Console.WriteLine("ID Inválido.");
+		pressKeyToContinue();
+		displayClientMenu();
+	}
+	if (parkingZone[id] == new DateTime()) 
+	{
+		Console.WriteLine("Não há nenhum carro estacionado neste lugar.");
+		pressKeyToContinue();
+		displayClientMenu();
+	}
+
+	parkingZone[id] = new DateTime();
+	Console.Clear();
+	Console.WriteLine("Obrigado pela sua preferência.");
+	pressKeyToContinue();
+	displayMainMenu();
+}
+
+void giveChange(int change)
+{
+	int[] coins = { 200, 100, 50, 20, 10, 5, 2, 1 };
+	Console.WriteLine("\nTroco:");
+	int countCoins(int change, int coinValue)
+	{
+		int numberOfCoins = 0;
+		while (change >= coinValue)
+		{
+			numberOfCoins++;
+			change -= coinValue;
+		}
+		if (numberOfCoins > 0)
+		{
+			float coinValueFl = (float)coinValue/100;
+			Console.WriteLine(numberOfCoins + " moeda(s) de " + coinValueFl.ToString("n2") + "€");
+		}
+		return change;
+	}
+
+	int remainingChange = change;
+	for (int i = 0; i < coins.Length; i++)
+		remainingChange = countCoins(remainingChange, coins[i]);
+}
+
 //GET ID PARA REMOVER CARRO
-int getIdFromUser() 
+int getIdFromUser()
 {
 	Console.Write("Introduza o seu ID: ");
 	string idStr = Console.ReadLine();
@@ -414,107 +469,6 @@ int getMaxCents(int centsPerHour, int maxTimeSeconds)
 	//       𝑥       ------- maxTimeSeconds
 
 	return centsPerHour * maxTimeSeconds / 3600;
-}
-
-// MENU DE MOSTRAR OS LUGARES
-void displayAllParkingSpots(int zoneNumber, DateTime[] parkingZone)  
-{
-	// Ver número de vagas/lugares ocupados em cada zona e carros que exederam o tempo de estacionamento permitido.
-	var dateTimeNow = DateTime.Now;
-
-	Console.WriteLine();
-	Console.WriteLine("Zona " + zoneNumber + ":");
-	for (int i = 0; i < parkingZone.Length; i++) 
-	{
-		if (parkingZone[i] == new DateTime())
-			Console.WriteLine("[ Lugar " + (i + 1) + " - Disponível ]");
-		else if (dateTimeNow > parkingZone[i])
-			Console.WriteLine("[ Lugar " + (i + 1) +  " - Carro excede o tempo pago! -> " + parkingZone[i] + " ]");
-		else
-			Console.WriteLine("[ Lugar " + (i + 1) + " - Ocupado até " + parkingZone[i] + " ]");
-	}
-}
-
-// FUNÇAO DE ESTACIONAR CARRO
-void parkCar(int zoneNumber, DateTime[] parkingZone, DateTime exitTime, int change)  
-{
-	for (int i = 0; i < parkingZone.Length; i++)
-	{
-		if (parkingZone[i] == new DateTime())
-        {
-			parkingZone[i] = exitTime;
-			string ticket = "";
-			ticket += "--------------------- Ticket ---------------------";
-			ticket += "\n O seu carro está estacionado na ZONA " + zoneNumber;
-			ticket += "\n O seu ID é " + (i + 1);
-			ticket += "\n O estacionamento é válido até " + exitTime;
-			ticket += "\n--------------------------------------------------";
-			ticketHistory.Add(ticket);
-			Console.Clear();
-			Console.Write(ticket);
-			if (change > 0)
-            {
-				giveChange(change);
-			}
-			totalInsertedCents = 0;
-			pressKeyToContinue();
-			displayMainMenu();
-        }
-	}
-}
-
-//REMOVER CARRO
-void removeCar(DateTime[] parkingZone, int id) 
-{
-	id = id - 1;
-	if ((id > (parkingZone.Length -1) || id < 0))
-	{
-		Console.WriteLine("ID Inválido.");
-		pressKeyToContinue();
-		displayClientMenu();
-	}
-	else if (parkingZone[id] == new DateTime()) 
-	{
-		Console.WriteLine("Não há nenhum carro estacionado neste lugar.");
-		pressKeyToContinue();
-		displayClientMenu();
-	}
-	else
-	{
-		parkingZone[id] = new DateTime();
-		Console.Clear();
-		Console.WriteLine("Obrigado pela sua preferência.");
-		pressKeyToContinue();
-		displayMainMenu();
-	}
-}
-
-void giveChange(int change)
-{
-	int[] intArr = { 200, 100, 50, 20, 10, 5, 2, 1 };
-	Console.WriteLine("\nTroco:");
-	int countCoins(int change, int coinValue)
-	{
-		int numberOfCoins = 0;
-		while (change >= coinValue)
-		{
-			numberOfCoins++;
-			change -= coinValue;
-		}
-		if (numberOfCoins > 0)
-		{
-			float coinValueFl = (float)coinValue/100;
-			Console.WriteLine(numberOfCoins + " moeda(s) de " + coinValueFl.ToString("n2") + "€");
-		}
-
-		return change;
-	}
-
-	int remainingChange = change;
-	for (int i = 0; i < intArr.Length; i++)
-	{
-		remainingChange = countCoins(remainingChange, intArr[i]);
-	}
 }
 
 void pressKeyToContinue()
