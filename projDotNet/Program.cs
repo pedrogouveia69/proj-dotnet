@@ -36,13 +36,15 @@ displayMainMenu();
 void displayMenu(string title, string[] options)
 {
 	Console.Clear();
-	Console.WriteLine("------- " + title + " -------");
+	string topLine = "------------ " + title + " ------------";
+	Console.WriteLine(topLine);
+
 	for (int i = 0; i < options.Length; i++)
-		Console.WriteLine("   " + (i + 1) + " - " + options[i]);
-	string hyphens = "----------------";
-	for (int j = 0; j < title.Length; j++)
-		hyphens += "-";
-	Console.WriteLine(hyphens);
+		Console.WriteLine(" " + (i + 1) + " - " + options[i]);
+
+	for (int j = 0; j < topLine.Length; j++)
+		Console.Write("-");
+	Console.WriteLine();
 }
 
 void displayMainMenu() 
@@ -308,25 +310,20 @@ DateTime checkExitTime(DateTime exitTime)
     {
 		// add 24 hours to jump to monday
 		// remove excess hours/minutes/seconds starting from 9:00
-		exitTime.AddHours(24);
-		exitTime.AddHours(9 - dateTimeNow.Hour).AddMinutes(-dateTimeNow.Minute).AddSeconds(-dateTimeNow.Second);
-		return exitTime;
+		return exitTime.AddHours(24).AddHours(9 - dateTimeNow.Hour).AddMinutes(-dateTimeNow.Minute).AddSeconds(-dateTimeNow.Second);
     }
 	if (exitTime.DayOfWeek == DayOfWeek.Saturday && exitTime.Hour >= 14)
 	{
 		// add 43 hours to jump to monday
 		// remove excess hours/minutes/seconds starting from 14:00
-		exitTime.AddHours(43);
-		exitTime.AddHours(14 - dateTimeNow.Hour).AddMinutes(-dateTimeNow.Minute).AddSeconds(-dateTimeNow.Second);
-		return exitTime;
+		return exitTime.AddHours(43).AddHours(14 - dateTimeNow.Hour).AddMinutes(-dateTimeNow.Minute).AddSeconds(-dateTimeNow.Second);
+
 	}
 	if (exitTime.Hour >= 20 || exitTime.Hour < 9)
 	{
 		// add 13 hours to jump to next day
 		// remove excess hours/minutes/seconds starting from 20:00
-		exitTime.AddHours(13);
-		exitTime.AddHours(20 - dateTimeNow.Hour).AddMinutes(-dateTimeNow.Minute).AddSeconds(-dateTimeNow.Second);
-		return exitTime;
+		return exitTime.AddHours(13).AddHours(20 - dateTimeNow.Hour).AddMinutes(-dateTimeNow.Minute).AddSeconds(-dateTimeNow.Second);
 	}
 	return exitTime;
 }
@@ -465,7 +462,6 @@ void giveChange(int change)
 		remainingChange = countCoins(remainingChange, coins[i]);
 }
 
-//GET ID PARA REMOVER CARRO
 int getIdFromUser()
 {
 	Console.Write("Introduza o seu ID: ");
