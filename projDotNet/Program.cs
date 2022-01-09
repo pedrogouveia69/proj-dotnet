@@ -198,7 +198,6 @@ void displayParkingInfo(int zoneNumber, DateTime[] parkingZone, int centsPerHour
 {
 	int seconds = getSeconds(centsPerHour, insertedCents);
 	var exitTime = DateTime.Now.AddSeconds(seconds);
-	exitTime = adjustExitTime(exitTime);
 	string[] coinOptions = { "0.05€", "0.10€", "0.20€", "0.50€", "1.00€", "2.00€", "Confirmar", "Cancelar" };
 	displayMenu("Insira uma Moeda", coinOptions);
 
@@ -215,24 +214,31 @@ void displayParkingInfo(int zoneNumber, DateTime[] parkingZone, int centsPerHour
 
 		if (seconds > maxTimeSeconds && maxTimeSeconds != -1)
 		{
-			Console.WriteLine("\nExcedeu o tempo máximo permitido.");
-			exitTime = DateTime.Now.AddSeconds(maxTimeSeconds);
-			exitTime = adjustExitTime(exitTime);
-			Console.WriteLine("O seu estacionamento será válido até: " + exitTime);
-			Console.WriteLine("Irá receber o troco juntamente com o Ticket.");
-			pressKeyToContinue();
-
-			int maxCents = getMaxCents(centsPerHour, maxTimeSeconds);
-			int change = insertedCents - maxCents;
-			totalAccumulatedCents += maxCents;
-			parkCar(zoneNumber, parkingZone, exitTime, change);
+			parkAndGiveChange(zoneNumber, parkingZone, centsPerHour, maxTimeSeconds);
 		}
 
+		exitTime = getAdjustedExitTime(exitTime);
 		Console.WriteLine("Duração: " + exitTime);
 		Console.WriteLine("\nInsira outra moeda ou escolha '7' para Confirmar.");
 	}
 	int option = selectOption(coinOptions.Length);
 	manageOption(option, zoneNumber, parkingZone, centsPerHour, maxTimeSeconds, exitTime);
+}
+
+void parkAndGiveChange(int zoneNumber, DateTime[] parkingZone, int centsPerHour, int maxTimeSeconds)
+{
+	var exitTime = DateTime.Now.AddSeconds(maxTimeSeconds);
+	exitTime = getAdjustedExitTime(exitTime);
+
+	Console.WriteLine("\nExcedeu o tempo máximo permitido.");
+	Console.WriteLine("O seu estacionamento será válido até: " + exitTime);
+	Console.WriteLine("Irá receber o troco juntamente com o Ticket.");
+	pressKeyToContinue();
+
+	int maxCents = getMaxCents(centsPerHour, maxTimeSeconds);
+	int change = insertedCents - maxCents;
+	totalAccumulatedCents += maxCents;
+	parkCar(zoneNumber, parkingZone, exitTime, change);
 }
 
 void manageOption(int option, int zoneNumber, DateTime[] parkingZone, int centsPerHour, int maxTimeSeconds, DateTime exitTime)
@@ -278,6 +284,10 @@ void displayAllParkingSpots(int zoneNumber, DateTime[] parkingZone)
 	}
 }
 
+// for an option to be valid it has to be:
+// an integer
+// no lesser than 1
+// no greater than the given length of an array of options
 int selectOption(int optionsLength)
 {
 	Console.Write("Escolha uma opção: ");
@@ -290,8 +300,6 @@ int selectOption(int optionsLength)
 
 	int option;
 	bool tryParse = int.TryParse(optionStr, out option);
-
-	// verifies if an option is valid based on the given array of options' length
 	if (!tryParse || (option < 1 || option > optionsLength))
 	{
 		Console.WriteLine("Opção inválida!");
@@ -302,11 +310,16 @@ int selectOption(int optionsLength)
 
 DateTime adjustExitTime(DateTime exitTime)
 {
-	if (DateTime.Now.DayOfWeek == DayOfWeek.Sunday)
-		// add 1 day to jump to monday
-		// remove excess hours/minutes/seconds after 9:00
-		return exitTime.AddDays(1).AddHours(9 - DateTime.Now.Hour).AddMinutes(-DateTime.Now.Minute).AddSeconds(-DateTime.Now.Second);
-
+	if (exitTime.DayOfWeek == DayOfWeek.Sunday)
+	{
+		if (DateTime.Now.DayOfWeek == DayOfWeek.Sunday)
+		{
+			// add 1 day to jump to monday
+			// remove excess hours/minutes/seconds after 9:00
+			return exitTime.AddDays(1).AddHours(9 - DateTime.Now.Hour).AddMinutes(-DateTime.Now.Minute).AddSeconds(-DateTime.Now.Second);
+		}
+		return exitTime.AddDays(1);
+	}
 	if (exitTime.DayOfWeek == DayOfWeek.Saturday && exitTime.Hour >= 14)
 	{
 		if (DateTime.Now.DayOfWeek == DayOfWeek.Saturday && DateTime.Now.Hour >= 14)
@@ -317,13 +330,17 @@ DateTime adjustExitTime(DateTime exitTime)
 		}
 		return exitTime.AddHours(43);
 	}
-	if (DateTime.Now.Hour < 9)
+	if (exitTime.Hour < 9)
 	{
-		// add 9 hours to jump to 9:00
-		// remove excess hours/minutes/seconds after 0:00
-		return exitTime.AddHours(9).AddHours(-DateTime.Now.Hour).AddMinutes(-DateTime.Now.Minute).AddSeconds(-DateTime.Now.Second);
+		if (DateTime.Now.Hour < 9)
+		{
+			// add 9 hours to jump to 9:00
+			// remove excess hours/minutes/seconds after 0:00
+			return exitTime.AddHours(9).AddHours(-DateTime.Now.Hour).AddMinutes(-DateTime.Now.Minute).AddSeconds(-DateTime.Now.Second);
+		}
+		return exitTime.AddHours(9 - exitTime.Hour);
 	}
-	if (exitTime.Hour >= 20 || exitTime.Hour < 9)
+	if (exitTime.Hour >= 20)
 	{
 		if (DateTime.Now.Hour >= 20)
 		{
@@ -336,44 +353,23 @@ DateTime adjustExitTime(DateTime exitTime)
 	return exitTime;
 }
 
-/*
-DateTime f(DateTime exitTime)
+DateTime getAdjustedExitTime(DateTime exitTime)
 {
-	if (exitTime.DayOfWeek == DayOfWeek.Sunday)
-    {
-		return exitTime.AddDays(1);
-    }
-	if (exitTime.DayOfWeek == DayOfWeek.Saturday && exitTime.Hour >= 14)
-    {
-		return exitTime.AddHours(10);
-    }
-	if (exitTime.Hour < 9)
-    {
-		return exitTime.AddHours(9 - DateTime.Now.Hour);
-    }
-	if (exitTime.Hour >= 20)
-    {
-		return exitTime.AddHours(4);
-    }
+	while
+	(
+		(exitTime.DayOfWeek == DayOfWeek.Sunday) ||
+		(exitTime.DayOfWeek == DayOfWeek.Saturday && (exitTime.Hour < 9 || exitTime.Hour >= 14)) ||
+		(exitTime.Hour < 9 || exitTime.Hour >= 20)
+	)
+	{
+		exitTime = adjustExitTime(exitTime);
+	}
 	return exitTime;
 }
-*/
-/*
-while
-(
-	(exitTime.DayOfWeek == DayOfWeek.Sunday) ||
-	(exitTime.DayOfWeek == DayOfWeek.Saturday && (exitTime.Hour < 9 || exitTime.Hour >= 14)) ||
-	(exitTime.Hour < 9 || exitTime.Hour >= 20)
-)
-{
-	exitTime = f(exitTime);
-}
-*/
 
 /*
 DateTime adjustExitTime(DateTime exitTime)
 {
-	DateTime DateTime.Now = DateTime.Now;
 	if (exitTime.Hour >= 20 || exitTime.Hour < 9)
 	{
 		if (exitTime.Hour + 13 >= 20 || exitTime.Hour < 9)
@@ -530,7 +526,6 @@ int getSeconds(int centsPerHour, int insertedCents)
 {
 	//  centsPerHour ------- 3600 seconds
 	// insertedCents -------  𝑥 seconds
-
 	return insertedCents * 3600 / centsPerHour;
 }
 
@@ -539,7 +534,6 @@ int getMaxCents(int centsPerHour, int maxTimeSeconds)
 {
 	//  centsPerHour ------- 3600 seconds
 	//    𝑥 cents    ------- maxTimeSeconds
-
 	return centsPerHour * maxTimeSeconds / 3600;
 }
 
