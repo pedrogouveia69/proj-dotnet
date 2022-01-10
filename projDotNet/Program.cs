@@ -28,6 +28,8 @@ int totalAccumulatedCents = 0;
 
 string adminPassword = "1234";
 
+int addHours = 0;
+
 displayMainMenu();
 
 // generates a menu based on a given title and array of options
@@ -344,10 +346,11 @@ DateTime adjustExitTime(DateTime exitTime)
 	{
 		if (DateTime.Now.Hour >= 20)
 		{
-			// add 13 hours to jump to next day
+			// add 13 hours to jump to next day 9:00
 			// remove excess hours/minutes/seconds after 20:00
 			return exitTime.AddHours(13).AddHours(20 - DateTime.Now.Hour).AddMinutes(-DateTime.Now.Minute).AddSeconds(-DateTime.Now.Second);
 		}
+		//addHours += 13;
 		return exitTime.AddHours(13);
 	}
 	return exitTime;
@@ -439,6 +442,7 @@ void parkCar(int zoneNumber, DateTime[] parkingZone, DateTime exitTime, int chan
 			if (change > 0)
 				giveChange(change);
 			insertedCents = 0;
+			addHours = 0;
 			pressKeyToContinue();
 			displayMainMenu();
         }
