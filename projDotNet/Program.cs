@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using projDotNet;
+using System.Text;
 Console.OutputEncoding = Encoding.UTF8;
 
 // 3 zonas de estacionamento (cada zona deverá ter um número aleatório de lugares de estacionamento).
@@ -22,8 +23,9 @@ int parkThreeMaxSeconds = -1;    // -1 will be considered as not having a max ti
 
 int[] coins = { 1, 2, 5, 10, 20, 50, 100, 200 };
 int insertedCents = 0;
+int addedHours = 0;
 
-var ticketHistory = new List<string>();
+var ticketHistory = new List<Ticket>();
 int totalAccumulatedCents = 0;
 
 string adminPassword = "1234";
@@ -102,7 +104,7 @@ void displayAdminMenu()
 			}
 			Console.WriteLine("\nHistórico de Tickets:");
 			foreach (var ticket in ticketHistory)
-				Console.WriteLine(ticket);
+				ticket.showTicket();
 			pressKeyToContinue();
 			displayAdminMenu();
 			break;
@@ -197,7 +199,7 @@ void displayParkingZones(bool userIsParking)
 void displayParkingInfo(int zoneNumber, DateTime[] parkingZone, int centsPerHour, int maxTimeSeconds) 
 {
 	int seconds = getSeconds(centsPerHour, insertedCents);
-	var exitTime = DateTime.Now.AddSeconds(seconds);
+	var exitTime = DateTime.Now.AddSeconds(seconds).AddHours(addedHours);
 	string[] coinOptions = { "0.05€", "0.10€", "0.20€", "0.50€", "1.00€", "2.00€", "Confirmar", "Cancelar" };
 	displayMenu("Insira uma Moeda", coinOptions);
 
@@ -227,8 +229,8 @@ void displayParkingInfo(int zoneNumber, DateTime[] parkingZone, int centsPerHour
 
 void parkAndGiveChange(int zoneNumber, DateTime[] parkingZone, int centsPerHour, int maxTimeSeconds)
 {
-	var exitTime = DateTime.Now.AddSeconds(maxTimeSeconds);
-	exitTime = getAdjustedExitTime(exitTime);
+	var exitTime = DateTime.Now.AddSeconds(maxTimeSeconds).AddHours(addedHours);
+	//exitTime = getAdjustedExitTime(exitTime);
 
 	Console.WriteLine("\nExcedeu o tempo máximo permitido.");
 	Console.WriteLine("O seu estacionamento será válido até: " + exitTime);
@@ -308,6 +310,7 @@ int selectOption(int optionsLength)
 	return option;
 }
 
+/*
 DateTime adjustExitTime(DateTime exitTime)
 {
 	if (exitTime.DayOfWeek == DayOfWeek.Sunday)
@@ -352,6 +355,27 @@ DateTime adjustExitTime(DateTime exitTime)
 	}
 	return exitTime;
 }
+*/
+
+void adjustExitTime(DateTime exitTime)
+{
+	if (exitTime.DayOfWeek == DayOfWeek.Sunday)
+	{
+		addedHours += 24;
+	}
+	if (exitTime.DayOfWeek == DayOfWeek.Saturday && exitTime.Hour >= 14)
+	{
+		addedHours += 43;
+	}
+	if (exitTime.Hour < 9)
+	{
+		addedHours += 9 - exitTime.Hour;
+	}
+	if (exitTime.Hour >= 20)
+	{
+		addedHours += 13;
+	}
+}
 
 DateTime getAdjustedExitTime(DateTime exitTime)
 {
@@ -362,8 +386,9 @@ DateTime getAdjustedExitTime(DateTime exitTime)
 		(exitTime.Hour < 9 || exitTime.Hour >= 20)
 	)
 	{
-		exitTime = adjustExitTime(exitTime);
+		adjustExitTime(exitTime);
 	}
+
 	return exitTime;
 }
 
@@ -424,18 +449,13 @@ void parkCar(int zoneNumber, DateTime[] parkingZone, DateTime exitTime, int chan
 		if (parkingZone[i] == new DateTime())
         {
 			// fills it with an exitTime
-			parkingZone[i] = exitTime;
-			string ticket = "";
-			ticket += "--------------------- Ticket ---------------------";
-			ticket += "\n O seu carro está estacionado na ZONA " + zoneNumber;
-			// returns an id based on the array's index
-			// adds +1 for visual purposes only (so the first id displayed isn't 0)
-			ticket += "\n O seu ID é " + (i + 1);
-			ticket += "\n O estacionamento é válido até " + exitTime;
-			ticket += "\n--------------------------------------------------";
+			parkingZone[i] = exitTime;		
+
+			//Ticket class example
+			var ticket = new Ticket(zoneNumber, i + 1, exitTime);
 			ticketHistory.Add(ticket);
 			Console.Clear();
-			Console.Write(ticket);
+			ticket.showTicket();
 			if (change > 0)
 				giveChange(change);
 			insertedCents = 0;
