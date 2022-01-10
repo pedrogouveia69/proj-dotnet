@@ -86,4 +86,3 @@ D:\github\projDotNet\projDotNet\obj\Debug\net6.0\projDotNet.dll
 D:\github\projDotNet\projDotNet\obj\Debug\net6.0\ref\projDotNet.dll
 D:\github\projDotNet\projDotNet\obj\Debug\net6.0\projDotNet.pdb
 D:\github\projDotNet\projDotNet\obj\Debug\net6.0\projDotNet.genruntimeconfig.cache
-D:\github\projDotNet\projDotNet\obj\Debug\net6.0\projDotNet.csproj.AssemblyReference.cache

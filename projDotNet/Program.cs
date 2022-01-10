@@ -22,15 +22,16 @@ int parkThreeCentsPerHour = 62;
 int parkThreeMaxSeconds = -1;    // -1 will be considered as not having a max time
 
 int[] coins = { 1, 2, 5, 10, 20, 50, 100, 200 };
+
 int insertedCents = 0;
 int addedHours = 0;
+int addedMinutes = 0;
+int addedSeconds = 0;
 
 var ticketHistory = new List<Ticket>();
 int totalAccumulatedCents = 0;
 
 string adminPassword = "1234";
-
-int addHours = 0;
 
 displayMainMenu();
 
@@ -201,7 +202,9 @@ void displayParkingZones(bool userIsParking)
 void displayParkingInfo(int zoneNumber, DateTime[] parkingZone, int centsPerHour, int maxTimeSeconds) 
 {
 	int seconds = getSeconds(centsPerHour, insertedCents);
-	var exitTime = DateTime.Now.AddSeconds(seconds).AddHours(addedHours);
+	var exitTime = DateTime.Now.AddSeconds(seconds + addedSeconds).AddHours(addedHours).AddMinutes(addedMinutes);
+	exitTime = getAdjustedExitTime(exitTime, seconds);
+
 	string[] coinOptions = { "0.05€", "0.10€", "0.20€", "0.50€", "1.00€", "2.00€", "Confirmar", "Cancelar" };
 	displayMenu("Insira uma Moeda", coinOptions);
 
@@ -213,15 +216,11 @@ void displayParkingInfo(int zoneNumber, DateTime[] parkingZone, int centsPerHour
 
 	if (insertedCents != 0) {
 		double totalEuros = (double)insertedCents/100;
-		Console.WriteLine("\nTotal: " + totalEuros.ToString("n2") + "€");
-		// ("n2") forces the converted double to have 2 decimal places
-
+		Console.WriteLine("\nTotal: " + totalEuros.ToString("n2") + "€"); // ("n2") forces the converted double to have 2 decimal places
 		if (seconds > maxTimeSeconds && maxTimeSeconds != -1)
 		{
 			parkAndGiveChange(zoneNumber, parkingZone, centsPerHour, maxTimeSeconds);
 		}
-
-		exitTime = getAdjustedExitTime(exitTime);
 		Console.WriteLine("Duração: " + exitTime);
 		Console.WriteLine("\nInsira outra moeda ou escolha '7' para Confirmar.");
 	}
@@ -231,8 +230,8 @@ void displayParkingInfo(int zoneNumber, DateTime[] parkingZone, int centsPerHour
 
 void parkAndGiveChange(int zoneNumber, DateTime[] parkingZone, int centsPerHour, int maxTimeSeconds)
 {
-	var exitTime = DateTime.Now.AddSeconds(maxTimeSeconds).AddHours(addedHours);
-	//exitTime = getAdjustedExitTime(exitTime);
+	var exitTime = DateTime.Now.AddSeconds(maxTimeSeconds + addedSeconds).AddHours(addedHours).AddMinutes(addedMinutes);
+	exitTime = getAdjustedExitTime(exitTime, maxTimeSeconds);
 
 	Console.WriteLine("\nExcedeu o tempo máximo permitido.");
 	Console.WriteLine("O seu estacionamento será válido até: " + exitTime);
@@ -247,6 +246,7 @@ void parkAndGiveChange(int zoneNumber, DateTime[] parkingZone, int centsPerHour,
 
 void manageOption(int option, int zoneNumber, DateTime[] parkingZone, int centsPerHour, int maxTimeSeconds, DateTime exitTime)
 {
+	// options = { "0.05€", "0.10€", "0.20€", "0.50€", "1.00€", "2.00€", "Confirmar", "Cancelar" };
 	if (option == 7 && insertedCents == 0)
 	{
 		Console.WriteLine("Não é possível Confirmar sem introduzir dinheiro.");
@@ -260,7 +260,7 @@ void manageOption(int option, int zoneNumber, DateTime[] parkingZone, int centsP
 	}
 	if (option == 8)
 	{
-		insertedCents = 0;
+		resetCounters();
 		displayClientMenu();
 	}
 
@@ -312,104 +312,66 @@ int selectOption(int optionsLength)
 	return option;
 }
 
-/*
-DateTime adjustExitTime(DateTime exitTime)
+DateTime adjustExitTime(DateTime exitTime, int seconds)
 {
 	if (exitTime.DayOfWeek == DayOfWeek.Sunday)
 	{
-		if (DateTime.Now.DayOfWeek == DayOfWeek.Sunday)
+		if (DateTime.Now.DayOfWeek == DayOfWeek.Sunday && exitTime.Day == DateTime.Now.Day)
 		{
-			// add 1 day to jump to monday
-			// remove excess hours/minutes/seconds after 9:00
-			return exitTime.AddDays(1).AddHours(9 - DateTime.Now.Hour).AddMinutes(-DateTime.Now.Minute).AddSeconds(-DateTime.Now.Second);
+			addedHours += 24 + 9 - DateTime.Now.Hour;
+			addedMinutes = -DateTime.Now.Minute;
+			addedSeconds = -DateTime.Now.Second;
 		}
-		return exitTime.AddDays(1);
+		else addedHours += 24;
 	}
-	if (exitTime.DayOfWeek == DayOfWeek.Saturday && exitTime.Hour >= 14)
+	else if (exitTime.DayOfWeek == DayOfWeek.Saturday && exitTime.Hour >= 14)
 	{
-		if (DateTime.Now.DayOfWeek == DayOfWeek.Saturday && DateTime.Now.Hour >= 14)
+		if (DateTime.Now.DayOfWeek == DayOfWeek.Saturday && exitTime.Hour >= 14 && exitTime.Day == DateTime.Now.Day)
 		{
-			// add 43 hours to jump to monday
-			// remove excess hours/minutes/seconds after 14:00
-			return exitTime.AddHours(43).AddHours(14 - DateTime.Now.Hour).AddMinutes(-DateTime.Now.Minute).AddSeconds(-DateTime.Now.Second);
+			addedHours += 43 + 14 - DateTime.Now.Hour;
+			addedMinutes = -DateTime.Now.Minute;
+			addedSeconds = -DateTime.Now.Second;
 		}
-		return exitTime.AddHours(43);
+		else addedHours += 43;
+			
 	}
-	if (exitTime.Hour < 9)
+	else if (exitTime.Hour < 9)
 	{
-		if (DateTime.Now.Hour < 9)
+		if (DateTime.Now.Hour < 9 && exitTime.Day == DateTime.Now.Day)
 		{
-			// add 9 hours to jump to 9:00
-			// remove excess hours/minutes/seconds after 0:00
-			return exitTime.AddHours(9).AddHours(-DateTime.Now.Hour).AddMinutes(-DateTime.Now.Minute).AddSeconds(-DateTime.Now.Second);
+			addedHours = 9 - DateTime.Now.Hour;
+			addedMinutes = -DateTime.Now.Minute;
+			addedSeconds = -DateTime.Now.Second;
 		}
-		return exitTime.AddHours(9 - exitTime.Hour);
+        else addedHours += 9 - exitTime.Hour;
 	}
-	if (exitTime.Hour >= 20)
+	else if (exitTime.Hour >= 20)
 	{
-		if (DateTime.Now.Hour >= 20)
-		{
-			// add 13 hours to jump to next day 9:00
-			// remove excess hours/minutes/seconds after 20:00
-			return exitTime.AddHours(13).AddHours(20 - DateTime.Now.Hour).AddMinutes(-DateTime.Now.Minute).AddSeconds(-DateTime.Now.Second);
-		}
-		//addHours += 13;
-		return exitTime.AddHours(13);
+		if (DateTime.Now.Hour >= 20 && exitTime.Day == DateTime.Now.Day)
+        {
+			addedHours = 9 + 20 - DateTime.Now.Hour;
+			addedMinutes = -DateTime.Now.Minute;
+			addedSeconds = -DateTime.Now.Second;
+        }
+        else addedHours += 13;
 	}
-	return exitTime;
-}
-*/
 
-void adjustExitTime(DateTime exitTime)
-{
-	if (exitTime.DayOfWeek == DayOfWeek.Sunday)
-	{
-		addedHours += 24;
-	}
-	if (exitTime.DayOfWeek == DayOfWeek.Saturday && exitTime.Hour >= 14)
-	{
-		addedHours += 43;
-	}
-	if (exitTime.Hour < 9)
-	{
-		addedHours += 9 - exitTime.Hour;
-	}
-	if (exitTime.Hour >= 20)
-	{
-		addedHours += 13;
-	}
+	return DateTime.Now.AddSeconds(seconds + addedSeconds).AddHours(addedHours).AddMinutes(addedMinutes);
 }
 
-DateTime getAdjustedExitTime(DateTime exitTime)
+DateTime getAdjustedExitTime(DateTime exitTime, int seconds)
 {
-	while
+    while
 	(
 		(exitTime.DayOfWeek == DayOfWeek.Sunday) ||
 		(exitTime.DayOfWeek == DayOfWeek.Saturday && (exitTime.Hour < 9 || exitTime.Hour >= 14)) ||
 		(exitTime.Hour < 9 || exitTime.Hour >= 20)
 	)
-	{
-		adjustExitTime(exitTime);
-	}
-
-	return exitTime;
-}
-
-/*
-DateTime adjustExitTime(DateTime exitTime)
-{
-	if (exitTime.Hour >= 20 || exitTime.Hour < 9)
-	{
-		if (exitTime.Hour + 13 >= 20 || exitTime.Hour < 9)
-		{
-			int aux = exitTime.Hour - 20;
-			return exitTime.AddHours(13-aux);
-		}
-		return exitTime.AddHours(13);
+    {
+		exitTime = adjustExitTime(exitTime, seconds);
 	}
 	return exitTime;
 }
-*/
 
 void showOpenHours()
 {
@@ -461,8 +423,7 @@ void parkCar(int zoneNumber, DateTime[] parkingZone, DateTime exitTime, int chan
 			ticket.showTicket();
 			if (change > 0)
 				giveChange(change);
-			insertedCents = 0;
-			addHours = 0;
+			resetCounters();
 			pressKeyToContinue();
 			displayMainMenu();
         }
@@ -512,8 +473,7 @@ void giveChange(int change)
 			double coinValueDouble = (double)coinValue/100;
 			Console.WriteLine(numberOfCoins + " moeda(s) de " + coinValueDouble.ToString("n2") + "€");
 		}
-		// returns remaining change
-		return change;
+		return change;	// returns remaining change
 	}
 
 	for (int i = coins.Length-1; i >= 0; i--)
@@ -568,5 +528,13 @@ void pressKeyToContinue()
 	Console.ReadKey(true);
 	// bool determines whether to display the pressed key in the console window
 	// true to not display the pressed key    
+}
+
+void resetCounters()
+{
+	insertedCents = 0;
+	addedHours = 0;
+	addedMinutes = 0;
+	addedSeconds = 0;
 }
 
