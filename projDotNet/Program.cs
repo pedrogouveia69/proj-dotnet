@@ -27,6 +27,7 @@ int insertedCents = 0;
 int addedHours = 0;
 int addedMinutes = 0;
 int addedSeconds = 0;
+int addedMilliseconds = 0;
 
 var ticketHistory = new List<Ticket>();
 int totalAccumulatedCents = 0;
@@ -322,38 +323,38 @@ DateTime calculateExitTime(int seconds)
 			addedMinutes = -DateTime.Now.Minute;
 			addedSeconds = -DateTime.Now.Second;
 		}
-		else addedHours += 24;
+		else addedHours += 24; // probably never reaches this else but whatever
 	}
 	else if (exitTime.DayOfWeek == DayOfWeek.Saturday && exitTime.Hour >= 14)
 	{
-		if (exitTime.Day == DateTime.Now.Day)
+		if (exitTime.Day == DateTime.Now.Day && DateTime.Now.Hour >= 14)
 		{
 			addedHours += 43 + 14 - DateTime.Now.Hour;
 			addedMinutes = -DateTime.Now.Minute;
 			addedSeconds = -DateTime.Now.Second;
 		}
 		else addedHours += 43;
-			
+
 	}
 	else if (exitTime.Hour < 9)
 	{
-		if (exitTime.Day == DateTime.Now.Day)
+		if (exitTime.Day == DateTime.Now.Day && DateTime.Now.Hour < 9)
 		{
 			addedHours = 9 - DateTime.Now.Hour;
 			addedMinutes = -DateTime.Now.Minute;
 			addedSeconds = -DateTime.Now.Second;
 		}
-        else addedHours += 9 - exitTime.Hour;
+		else addedHours += 9 - exitTime.Hour;
 	}
 	else if (exitTime.Hour >= 20)
 	{
-		if (exitTime.Day == DateTime.Now.Day)
-        {
-			addedHours = 9 + 20 - DateTime.Now.Hour;
+		if (exitTime.Day == DateTime.Now.Day && DateTime.Now.Hour >= 20)
+		{
+			addedHours = 13 + 20 - DateTime.Now.Hour;
 			addedMinutes = -DateTime.Now.Minute;
 			addedSeconds = -DateTime.Now.Second;
-        }
-        else addedHours += 13;
+		}
+		else addedHours += 13;
 	}
 
 	return DateTime.Now.AddSeconds(seconds + addedSeconds).AddHours(addedHours).AddMinutes(addedMinutes);
@@ -522,5 +523,14 @@ void resetCounters()
 	addedHours = 0;
 	addedMinutes = 0;
 	addedSeconds = 0;
+	addedMilliseconds = 0;
+
+	/*
+	int[] valuesToReset = { addedHours, addedMinutes, addedSeconds, insertedCents };
+	for (int i = 0; i < valuesToReset.Length; i++)
+	{
+		valuesToReset[i] = 0;
+	}
+	*/
 }
 
