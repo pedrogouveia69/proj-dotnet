@@ -23,12 +23,16 @@
             Console.WriteLine("O seu carro está estacionado na ZONA " + zoneNumber);
             Console.WriteLine("O seu ID é " + parkingSpotId);
             Console.WriteLine("O estacionamento é válido até " + exitTime);
-            Console.WriteLine("\nTotal pago: " + ToDouble(valuePaid).ToString("n2") + "€");
+            Console.WriteLine("\nTotal pago: " + ToEuros(valuePaid));
             if (change > 0)
-                Console.WriteLine("Troco: " + ToDouble(change).ToString("n2") + "€");
+                Console.WriteLine("Troco: " + ToEuros(change));
             Console.WriteLine("--------------------------------------------------");
         }
 
-        private double ToDouble(int integerValue) { return (double)integerValue/100; }
+        private string ToEuros(int valuePaid) 
+        { 
+            double valuePaidDouble = (double)valuePaid / 100;
+            return valuePaidDouble.ToString("n2");
+        }
     }
 }

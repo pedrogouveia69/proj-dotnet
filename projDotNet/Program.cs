@@ -21,8 +21,10 @@ int parkTwoMaxSeconds = 7200;
 int parkThreeCentsPerHour = 62;
 int parkThreeMaxSeconds = -1;    // -1 will be considered as not having a max time
 
+// array of coins used for calcs
 int[] coins = { 1, 2, 5, 10, 20, 50, 100, 200 };
 
+// counters for inserted money/addedHours/...
 int insertedCents = 0;
 int addedHours = 0;
 int addedMinutes = 0;
@@ -145,6 +147,7 @@ void displayClientMenu()
 			break;
 		case 3:
 			showOpenHours();
+			displayClientMenu();
 			break;
 		case 4:
 			displayMainMenu();
@@ -210,8 +213,6 @@ void displayParkingInfo(int zoneNumber, DateTime[] parkingZone, int centsPerHour
 	Console.WriteLine("Custo por hora: " + (double)centsPerHour/100 + "€");
 	if (maxTimeSeconds != -1) 
 		Console.WriteLine("Tempo máximo permitido: " + maxTimeSeconds/60 + " minutos");
-
-	showOpenHours();
 
 	int seconds = getSeconds(centsPerHour, insertedCents);	
 	var exitTime = calculateExitTime(seconds);
@@ -321,6 +322,7 @@ DateTime calculateExitTime(int seconds)
 	{
 		if (exitTime.Day == DateTime.Now.Day)
 		{
+			// add 24 hours to jump to monday & remove excess hours/minutes/seconds
 			addedHours += 24 + 9 - DateTime.Now.Hour;
 			addedMinutes = -DateTime.Now.Minute;
 			addedSeconds = -DateTime.Now.Second;
@@ -397,8 +399,6 @@ void parkCar(int zoneNumber, DateTime[] parkingZone, DateTime exitTime, int chan
         {
 			// fills it with an exitTime
 			parkingZone[i] = exitTime;		
-
-			//Ticket class example
 			var ticket = new Ticket(zoneNumber, i + 1, exitTime, insertedCents, change);
 			ticketHistory.Add(ticket);
 			Console.Clear();
@@ -438,6 +438,7 @@ void removeCar(DateTime[] parkingZone, int id)
 	pressKeyToContinue();
 	displayMainMenu();
 }
+
 
 void giveChange(int change)
 {
@@ -518,7 +519,6 @@ void resetCounters()
 	addedHours = 0;
 	addedMinutes = 0;
 	addedSeconds = 0;
-
 	/*
 	int[] valuesToReset = { addedHours, addedMinutes, addedSeconds, insertedCents };
 	for (int i = 0; i < valuesToReset.Length; i++)
