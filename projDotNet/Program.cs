@@ -27,7 +27,6 @@ int insertedCents = 0;
 int addedHours = 0;
 int addedMinutes = 0;
 int addedSeconds = 0;
-int addedMilliseconds = 0;
 
 var ticketHistory = new List<Ticket>();
 int totalAccumulatedCents = 0;
@@ -231,7 +230,7 @@ void displayParkingInfo(int zoneNumber, DateTime[] parkingZone, int centsPerHour
 
 void parkAndGiveChange(int zoneNumber, DateTime[] parkingZone, int centsPerHour, int maxTimeSeconds)
 {
-	var exitTime = calculateExitTime( maxTimeSeconds);
+	var exitTime = calculateExitTime(maxTimeSeconds);
 	Console.WriteLine("\nExcedeu o tempo máximo permitido.");
 	Console.WriteLine("O seu estacionamento será válido até: " + exitTime);
 	Console.WriteLine("Irá receber o troco juntamente com o Ticket.");
@@ -404,7 +403,7 @@ void parkCar(int zoneNumber, DateTime[] parkingZone, DateTime exitTime, int chan
 			parkingZone[i] = exitTime;		
 
 			//Ticket class example
-			var ticket = new Ticket(zoneNumber, i + 1, exitTime);
+			var ticket = new Ticket(zoneNumber, i + 1, exitTime, insertedCents, change);
 			ticketHistory.Add(ticket);
 			Console.Clear();
 			ticket.showTicket();
@@ -523,7 +522,6 @@ void resetCounters()
 	addedHours = 0;
 	addedMinutes = 0;
 	addedSeconds = 0;
-	addedMilliseconds = 0;
 
 	/*
 	int[] valuesToReset = { addedHours, addedMinutes, addedSeconds, insertedCents };
