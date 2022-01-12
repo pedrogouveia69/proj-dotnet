@@ -131,7 +131,7 @@ void displayAdminMenu()
 
 void displayClientMenu() 
 {
-	string[] clientMenuOptions = { "Estacionar", "Remover Carro", "Voltar" };
+	string[] clientMenuOptions = { "Estacionar", "Remover Carro", "Ver Horário de Funcionamento", "Voltar" };
 	displayMenu("Menu Cliente", clientMenuOptions);
 
 	int option = selectOption(clientMenuOptions.Length);
@@ -144,6 +144,9 @@ void displayClientMenu()
 			displayParkingZones(false);
 			break;
 		case 3:
+			showOpenHours();
+			break;
+		case 4:
 			displayMainMenu();
 			break;
 	}
@@ -361,18 +364,11 @@ DateTime calculateExitTime(int seconds)
 
 void showOpenHours()
 {
-	if 
-	(
-		(DateTime.Now.DayOfWeek == DayOfWeek.Sunday) ||
-		(DateTime.Now.DayOfWeek == DayOfWeek.Saturday && (DateTime.Now.Hour < 9 || DateTime.Now.Hour >= 14)) ||
-		(DateTime.Now.Hour < 9 || DateTime.Now.Hour >= 20)
-	)
-	{
-		Console.WriteLine("\nHorário de Funcionamento dos Parquímetros:");
-		Console.WriteLine(" - Dias Úteis:  9:00 - 20:00");
-		Console.WriteLine(" - Sábados:     9:00 - 14:00\n");
-		Console.WriteLine("As suas moedas serão contabilizadas para o próximo período aberto.");
-	}
+	Console.WriteLine("\nHorário de Funcionamento dos Parquímetros:");
+	Console.WriteLine(" - Dias Úteis:  9:00 - 20:00");
+	Console.WriteLine(" - Sábados:     9:00 - 14:00\n");
+	Console.WriteLine("As moedas introduzidas fora deste horário serão contabilizadas para o próximo período aberto.");
+	pressKeyToContinue();
 }
 
 bool parkIsFull(DateTime[] parkingZone) 
