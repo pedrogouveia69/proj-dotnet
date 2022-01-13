@@ -2,7 +2,7 @@
 {
     public class Ticket
     {
-        public int zoneNumber { get; }
+        public int zoneNumber { get; } //read-only // pode aceder, nao pode modificar
         public int parkingSpotId { get; }
         public DateTime exitTime { get; }
         public int valuePaid { get; }
