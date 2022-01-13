@@ -2,11 +2,11 @@
 {
     public class Ticket
     {
-        private int zoneNumber;
-        private int parkingSpotId;
-        private DateTime exitTime;
-        private int valuePaid;
-        private int change;
+        public int zoneNumber { get; }
+        public int parkingSpotId { get; }
+        public DateTime exitTime { get; }
+        public int valuePaid { get; }
+        public int change { get; }
 
         public Ticket(int zoneNumber, int parkingSpotId, DateTime exitTime, int valuePaid, int change)
         {
@@ -16,23 +16,25 @@
             this.valuePaid = valuePaid;
             this.change = change;
         }
-
-        public void showTicket()
+        public override string ToString()
         {
-            Console.WriteLine("--------------------- Ticket ---------------------");
-            Console.WriteLine("O seu carro está estacionado na ZONA " + zoneNumber);
-            Console.WriteLine("O seu ID é " + parkingSpotId);
-            Console.WriteLine("O estacionamento é válido até " + exitTime);
-            Console.WriteLine("\nTotal pago: " + ToEuros(valuePaid));
+            string ticket = "";
+            ticket += "--------------------- Ticket ---------------------";
+            ticket += "\nO seu carro está estacionado na ZONA " + zoneNumber;
+            ticket += "\nO seu ID é " + parkingSpotId;
+            ticket += "\nO estacionamento é válido até " + exitTime;
+            ticket += "\n\nTotal pago: " + ToEuros(valuePaid);
             if (change > 0)
-                Console.WriteLine("Troco: " + ToEuros(change));
-            Console.WriteLine("--------------------------------------------------");
+                ticket += "\nTroco: " + ToEuros(change);
+            ticket += "\n--------------------------------------------------";
+
+            return ticket;
         }
 
-        private string ToEuros(int valuePaid) 
+        private string ToEuros(int cents) 
         { 
-            double valuePaidDouble = (double)valuePaid / 100;
-            return valuePaidDouble.ToString("n2");
+            double d = (double)cents / 100;
+            return d.ToString("n2") + "€";
         }
     }
 }

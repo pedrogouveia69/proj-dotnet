@@ -88,6 +88,7 @@ void displayAdminMenu()
 	switch (option)
 	{
 		case 1:
+			Console.Clear();
 			var parkList = new List<DateTime[]> { parkOne, parkTwo, parkThree };
             for (int i = 0; i < parkList.Count; i++)
 				displayAllParkingSpots(i + 1, parkList[i]);
@@ -107,9 +108,10 @@ void displayAdminMenu()
 				pressKeyToContinue();
 				displayAdminMenu();
 			}
+			Console.Clear();
 			Console.WriteLine("\nHistórico de Tickets:");
 			foreach (var ticket in ticketHistory)
-				ticket.showTicket();
+				Console.WriteLine(ticket.ToString());
 			pressKeyToContinue();
 			displayAdminMenu();
 			break;
@@ -311,6 +313,7 @@ int selectOption(int optionsLength)
 		Console.WriteLine("Opção inválida!");
 		return selectOption(optionsLength);
 	}
+
 	return option;
 }
 
@@ -323,42 +326,42 @@ DateTime calculateExitTime(int seconds)
 		if (exitTime.Day == DateTime.Now.Day)
 		{
 			// add 24 hours to jump to monday & remove excess hours/minutes/seconds
-			addedHours += 24 + 9 - DateTime.Now.Hour;
-			addedMinutes = -DateTime.Now.Minute;
-			addedSeconds = -DateTime.Now.Second;
+			addedHours += 9 - DateTime.Now.Hour;
+			addedMinutes -= DateTime.Now.Minute;
+			addedSeconds -= DateTime.Now.Second;
 		}
-		else addedHours += 24; // probably never reaches this else but whatever
+		addedHours += 24;
 	}
 	else if (exitTime.DayOfWeek == DayOfWeek.Saturday && exitTime.Hour >= 14)
 	{
 		if (exitTime.Day == DateTime.Now.Day && DateTime.Now.Hour >= 14)
 		{
-			addedHours += 43 + 14 - DateTime.Now.Hour;
-			addedMinutes = -DateTime.Now.Minute;
-			addedSeconds = -DateTime.Now.Second;
+			addedHours += 14 - DateTime.Now.Hour;
+			addedMinutes -= DateTime.Now.Minute;
+			addedSeconds -= DateTime.Now.Second;
 		}
-		else addedHours += 43;
+		addedHours += 43;
 
 	}
 	else if (exitTime.Hour < 9)
 	{
 		if (exitTime.Day == DateTime.Now.Day && DateTime.Now.Hour < 9)
 		{
-			addedHours = 9 - DateTime.Now.Hour;
-			addedMinutes = -DateTime.Now.Minute;
-			addedSeconds = -DateTime.Now.Second;
+			addedHours += 9 - DateTime.Now.Hour;
+			addedMinutes -= DateTime.Now.Minute;
+			addedSeconds -= DateTime.Now.Second;
 		}
-		else addedHours += 9 - exitTime.Hour;
+		else addedHours += 9 - exitTime.Hour; // probably never enters this else but whatever
 	}
 	else if (exitTime.Hour >= 20)
 	{
 		if (exitTime.Day == DateTime.Now.Day && DateTime.Now.Hour >= 20)
 		{
-			addedHours = 13 + 20 - DateTime.Now.Hour;
-			addedMinutes = -DateTime.Now.Minute;
-			addedSeconds = -DateTime.Now.Second;
+			addedHours += 20 - DateTime.Now.Hour;
+			addedMinutes -= DateTime.Now.Minute;
+			addedSeconds -= DateTime.Now.Second;
 		}
-		else addedHours += 13;
+		addedHours += 13;
 	}
 
 	return DateTime.Now.AddSeconds(seconds + addedSeconds).AddHours(addedHours).AddMinutes(addedMinutes);
@@ -402,7 +405,7 @@ void parkCar(int zoneNumber, DateTime[] parkingZone, DateTime exitTime, int chan
 			var ticket = new Ticket(zoneNumber, i + 1, exitTime, insertedCents, change);
 			ticketHistory.Add(ticket);
 			Console.Clear();
-			ticket.showTicket();
+			Console.WriteLine(ticket.ToString());
 			if (change > 0)
 				giveChange(change);
 			resetCounters();

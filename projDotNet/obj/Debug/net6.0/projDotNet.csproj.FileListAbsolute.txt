@@ -72,12 +72,14 @@ C:\Users\Net04\Documents\GitHub\projDotNet\projDotNet\obj\Debug\net6.0\projDotNe
 C:\Users\Net04\Documents\GitHub\projDotNet\projDotNet\obj\Debug\net6.0\ref\projDotNet.dll
 C:\Users\Net04\Documents\GitHub\projDotNet\projDotNet\obj\Debug\net6.0\projDotNet.pdb
 C:\Users\Net04\Documents\GitHub\projDotNet\projDotNet\obj\Debug\net6.0\projDotNet.genruntimeconfig.cache
+C:\Users\Net04\Documents\GitHub\projDotNet\projDotNet\obj\Debug\net6.0\projDotNet.csproj.AssemblyReference.cache
 D:\github\projDotNet\projDotNet\bin\Debug\net6.0\projDotNet.exe
 D:\github\projDotNet\projDotNet\bin\Debug\net6.0\projDotNet.deps.json
 D:\github\projDotNet\projDotNet\bin\Debug\net6.0\projDotNet.runtimeconfig.json
 D:\github\projDotNet\projDotNet\bin\Debug\net6.0\projDotNet.dll
 D:\github\projDotNet\projDotNet\bin\Debug\net6.0\ref\projDotNet.dll
 D:\github\projDotNet\projDotNet\bin\Debug\net6.0\projDotNet.pdb
+D:\github\projDotNet\projDotNet\obj\Debug\net6.0\projDotNet.csproj.AssemblyReference.cache
 D:\github\projDotNet\projDotNet\obj\Debug\net6.0\projDotNet.GeneratedMSBuildEditorConfig.editorconfig
 D:\github\projDotNet\projDotNet\obj\Debug\net6.0\projDotNet.AssemblyInfoInputs.cache
 D:\github\projDotNet\projDotNet\obj\Debug\net6.0\projDotNet.AssemblyInfo.cs
@@ -86,5 +88,3 @@ D:\github\projDotNet\projDotNet\obj\Debug\net6.0\projDotNet.dll
 D:\github\projDotNet\projDotNet\obj\Debug\net6.0\ref\projDotNet.dll
 D:\github\projDotNet\projDotNet\obj\Debug\net6.0\projDotNet.pdb
 D:\github\projDotNet\projDotNet\obj\Debug\net6.0\projDotNet.genruntimeconfig.cache
-D:\github\projDotNet\projDotNet\obj\Debug\net6.0\projDotNet.csproj.AssemblyReference.cache
-C:\Users\Net04\Documents\GitHub\projDotNet\projDotNet\obj\Debug\net6.0\projDotNet.csproj.AssemblyReference.cache
