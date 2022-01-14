@@ -2,7 +2,6 @@
 using System.Text;
 Console.OutputEncoding = Encoding.UTF8;
 
-// 3 zonas de estacionamento (cada zona deverá ter um número aleatório de lugares de estacionamento).
 var rand = new Random();
 // in this program a parking zone is represented by an array of DateTimes
 var parkOne = new DateTime[rand.Next(5, 10)];
@@ -19,9 +18,10 @@ int parkTwoMaxSeconds = 7200;
 
 // Zona 3 tem o custo de 0.62€ /hora e não possui duração máxima.
 int parkThreeCentsPerHour = 62;
-int parkThreeMaxSeconds = -1;    // -1 will be considered as not having a max time
+// -1 will be considered as not having a max time
+int parkThreeMaxSeconds = -1;    
 
-// array of coins used for calcs
+// array is used to insert coins & calculate change
 int[] coins = { 1, 2, 5, 10, 20, 50, 100, 200 };
 
 // counters for inserted money/addedHours/...
@@ -157,7 +157,7 @@ void displayClientMenu()
 	}
 }
 
-// reutilizes the same function for parking and unparking
+// reutilizes the same menu for parking and unparking
 // a user is parking if userIsParking == true
 void displayParkingZones(bool userIsParking) 
 {
@@ -283,9 +283,11 @@ void displayAllParkingSpots(int zoneNumber, DateTime[] parkingZone)
 	Console.WriteLine("Zona " + zoneNumber + ":");
 	for (int i = 0; i < parkingZone.Length; i++)
 	{
+		// if empty
 		if (parkingZone[i] == new DateTime())
 			Console.WriteLine("[ Lugar " + (i+1) + " - Disponível ]");
-		else if (DateTime.Now > parkingZone[i])
+		// if lesser than current time
+		else if (parkingZone[i] < DateTime.Now)
 			Console.WriteLine("[ Lugar " + (i+1) +  " - Carro excede o tempo pago! -> " + parkingZone[i] + " ]");
 		else
 			Console.WriteLine("[ Lugar " + (i+1) + " - Ocupado até " + parkingZone[i] + " ]");
@@ -317,6 +319,7 @@ int selectOption(int optionsLength)
 	return option;
 }
 
+// exitTime will be refreshed when a new coin is inserted
 DateTime calculateExitTime(int seconds)
 {
 	var exitTime = DateTime.Now.AddSeconds(seconds + addedSeconds).AddHours(addedHours).AddMinutes(addedMinutes);
@@ -325,21 +328,24 @@ DateTime calculateExitTime(int seconds)
 	{
 		if (exitTime.Day == DateTime.Now.Day)
 		{
-			// add 24 hours to jump to monday & remove excess hours/minutes/seconds
+			// remove excess hours/minutes/seconds after 9:00
 			addedHours += 9 - DateTime.Now.Hour;
 			addedMinutes -= DateTime.Now.Minute;
 			addedSeconds -= DateTime.Now.Second;
 		}
+		// add 24 hours to jump to monday 9:00
 		addedHours += 24;
 	}
 	else if (exitTime.DayOfWeek == DayOfWeek.Saturday && exitTime.Hour >= 14)
 	{
 		if (exitTime.Day == DateTime.Now.Day && DateTime.Now.Hour >= 14)
 		{
+			// remove excess hours/minutes/seconds after 14:00
 			addedHours += 14 - DateTime.Now.Hour;
 			addedMinutes -= DateTime.Now.Minute;
 			addedSeconds -= DateTime.Now.Second;
 		}
+		// add 43 hours to jump to monday 9:00
 		addedHours += 43;
 
 	}
@@ -351,16 +357,19 @@ DateTime calculateExitTime(int seconds)
 			addedMinutes -= DateTime.Now.Minute;
 			addedSeconds -= DateTime.Now.Second;
 		}
-		else addedHours += 9 - exitTime.Hour; // probably never enters this else but whatever
+		// probably never enters this else but whatever
+		else addedHours += 9 - exitTime.Hour; 
 	}
 	else if (exitTime.Hour >= 20)
 	{
 		if (exitTime.Day == DateTime.Now.Day && DateTime.Now.Hour >= 20)
 		{
+			// remove excess hours/minutes/seconds after 20:00
 			addedHours += 20 - DateTime.Now.Hour;
 			addedMinutes -= DateTime.Now.Minute;
 			addedSeconds -= DateTime.Now.Second;
 		}
+		// add 13 hours to jump to next day 9:00
 		addedHours += 13;
 	}
 
@@ -401,7 +410,8 @@ void parkCar(int zoneNumber, DateTime[] parkingZone, DateTime exitTime, int chan
 		if (parkingZone[i] == new DateTime())
         {
 			// fills it with an exitTime
-			parkingZone[i] = exitTime;		
+			parkingZone[i] = exitTime;
+			// adds +1 to the id for visual purposes only (so the id doesn't start from 0)
 			var ticket = new Ticket(zoneNumber, i + 1, exitTime, insertedCents, change);
 			ticketHistory.Add(ticket);
 			Console.Clear();
@@ -470,6 +480,7 @@ void giveChange(int change)
 	}
 }
 
+// id cannot be null/must be an integer
 int getIdFromUser()
 {
 	Console.Write("Introduza o seu ID: ");
@@ -522,7 +533,8 @@ void resetCounters()
 	addedHours = 0;
 	addedMinutes = 0;
 	addedSeconds = 0;
-	/*
+
+	/* // doesn't work for some reason
 	int[] valuesToReset = { addedHours, addedMinutes, addedSeconds, insertedCents };
 	for (int i = 0; i < valuesToReset.Length; i++)
 	{
